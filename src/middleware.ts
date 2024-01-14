@@ -15,8 +15,8 @@ export async function middleware(request: NextRequest) {
   const isOnPublicPath = publicPaths.includes(currentPath);
   if (!session && !isOnPublicPath) {
     return NextResponse.redirect(
-      process.env.NEXT_PUBLIC_VERCEL_URL
-        ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/login`
+      process.env.NEXT_PUBLIC_URL
+        ? `https://${process.env.NEXT_PUBLIC_URL}/login`
         : "http://localhost:3000/login",
     );
   }
