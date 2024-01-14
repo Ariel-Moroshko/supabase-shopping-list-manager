@@ -22,7 +22,7 @@ export default function SignInWithGoogle() {
   };
 
   return (
-    <button onClick={handleSignInWithGoogle} className="bg-blue-200 px-8 py-4">
+    <button onClick={handleSignInWithGoogle} className="bg-blue-300 px-8 py-4">
       {isPending ? "Signing in..." : "Sign in with Google"}
     </button>
   );
