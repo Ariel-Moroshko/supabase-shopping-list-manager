@@ -14,7 +14,7 @@ export default function SignOut() {
 function SignOutButton() {
   const { pending } = useFormStatus();
   return (
-    <button className="bg-red-200 px-8 py-4 w-32">
+    <button className="w-32 bg-red-300 px-8 py-4">
       {pending ? "Signing out..." : "Sign out"}
     </button>
   );
