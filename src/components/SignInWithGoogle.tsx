@@ -12,8 +12,8 @@ export default function SignInWithGoogle() {
       await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: process.env.VERCEL_URL
-            ? `https://${process.env.VERCEL_URL}/auth/callback`
+          redirectTo: process.env.NEXT_PUBLIC_VERCEL_ENV
+            ? `https://${process.env.NEXT_PUBLIC_VERCEL_ENV}/auth/callback`
             : `http://localhost:3000/auth/callback`,
         },
       });
