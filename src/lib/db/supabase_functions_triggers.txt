@@ -1,0 +1,16 @@
+function "insert_new_user_to_users_table":
+---------------------------------------------------------------------------------------
+begin
+  insert into public.users(id, email)
+  values(
+    new.id, 
+    new.email
+  );
+  return new;
+end;
+
+#######################################################################################
+
+sql trigger auth.users table:
+---------------------------------------------------------------------------------------
+create trigger create_user_on_signup after insert on auth.users for each row execute function insert_new_user_to_users_table();

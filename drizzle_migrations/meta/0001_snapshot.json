@@ -1,0 +1,309 @@
+{
+  "id": "6b9ab9b1-86e1-4289-bbe5-23ea7b44f65f",
+  "prevId": "f12485ab-a8f1-4fd6-b932-b03e97fefeeb",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {
+    "categories": {
+      "name": "categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "listId": {
+          "name": "listId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "position": {
+          "name": "position",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "listId_index": {
+          "name": "listId_index",
+          "columns": [
+            "listId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "categories_listId_lists_id_fk": {
+          "name": "categories_listId_lists_id_fk",
+          "tableFrom": "categories",
+          "tableTo": "lists",
+          "columnsFrom": [
+            "listId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "categories_name_listId_unique": {
+          "name": "categories_name_listId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name",
+            "listId"
+          ]
+        }
+      }
+    },
+    "items": {
+      "name": "items",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isInShoppingList": {
+          "name": "isInShoppingList",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "isPickedUp": {
+          "name": "isPickedUp",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {
+        "categoryId_index": {
+          "name": "categoryId_index",
+          "columns": [
+            "categoryId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "items_categoryId_categories_id_fk": {
+          "name": "items_categoryId_categories_id_fk",
+          "tableFrom": "items",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "items_name_categoryId_unique": {
+          "name": "items_name_categoryId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name",
+            "categoryId"
+          ]
+        }
+      }
+    },
+    "lists": {
+      "name": "lists",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invitationKey": {
+          "name": "invitationKey",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "lists_invitationKey_unique": {
+          "name": "lists_invitationKey_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "invitationKey"
+          ]
+        }
+      }
+    },
+    "users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mainListId": {
+          "name": "mainListId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "users_mainListId_lists_id_fk": {
+          "name": "users_mainListId_lists_id_fk",
+          "tableFrom": "users",
+          "tableTo": "lists",
+          "columnsFrom": [
+            "mainListId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "usersLists": {
+      "name": "usersLists",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "listId": {
+          "name": "listId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "usersLists_userId_users_id_fk": {
+          "name": "usersLists_userId_users_id_fk",
+          "tableFrom": "usersLists",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "usersLists_listId_lists_id_fk": {
+          "name": "usersLists_listId_lists_id_fk",
+          "tableFrom": "usersLists",
+          "tableTo": "lists",
+          "columnsFrom": [
+            "listId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "usersLists_userId_listId_pk": {
+          "name": "usersLists_userId_listId_pk",
+          "columns": [
+            "userId",
+            "listId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

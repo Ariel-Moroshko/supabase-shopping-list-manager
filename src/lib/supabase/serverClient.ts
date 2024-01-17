@@ -12,6 +12,17 @@ export function getSupabaseServerClient() {
           return cookieStore.get(name)?.value;
         },
       },
-    }
+    },
   );
 }
+
+export const getUserIdFromSession = async () => {
+  const supabase = getSupabaseServerClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session?.user) {
+    throw new Error("Couldn't find user inside current session");
+  }
+  return session.user.id;
+};

@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1705317515612,
+      "tag": "0000_vengeful_nebula",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1705439307252,
+      "tag": "0001_overrated_captain_america",
+      "breakpoints": true
+    }
+  ]
+}
