@@ -4,17 +4,36 @@ import {
   addItemToShoppingList,
   addItemToShoppingListFormState,
 } from "@/actions/addItemToShoppingList";
+import { useListContext } from "@/hooks/useListContext";
 import { Item } from "@/types/List";
+import { FormEvent, useLayoutEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 const initialFormState: addItemToShoppingListFormState = { success: false };
-type Props = { listId: number; item: Item };
+type Props = { item: Item };
 
-export default function AllItemsItem({ listId, item }: Props) {
+export default function AllItemsItem({ item }: Props) {
+  const { list, updateItem } = useListContext();
   const [formState, formAction] = useFormState(
     addItemToShoppingList,
     initialFormState,
   );
+  const hasUpdatedList = useRef(false);
+
+  useLayoutEffect(() => {
+    if (formState.success && !hasUpdatedList.current) {
+      updateItem({
+        ...item,
+        isInShoppingList: true,
+      });
+      hasUpdatedList.current = true;
+    }
+  }, [formState, updateItem, formState.success, item]);
+
+  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+    hasUpdatedList.current = false;
+  };
+
   return (
     <li className="flex items-center">
       <span
@@ -25,8 +44,8 @@ export default function AllItemsItem({ listId, item }: Props) {
       {item.isInShoppingList ? (
         <div className="bg-emerald-200 px-4">Added!</div>
       ) : (
-        <form action={formAction} className="">
-          <input type="hidden" name="listId" value={listId} />
+        <form action={formAction} onSubmit={handleFormSubmit} className="">
+          <input type="hidden" name="listId" value={list.id} />
           <input type="hidden" name="itemId" value={item.id} />
           <FormContents item={item} formState={formState} />
         </form>
@@ -43,7 +62,8 @@ function FormContents({
   item: Item;
 }) {
   const { pending } = useFormStatus();
-  const hasErrors = !pending && formState.error;
+  const showErrors = !pending && formState.error;
+
   return (
     <div>
       <button
@@ -51,9 +71,9 @@ function FormContents({
         className="bg-slate-300 px-2"
         disabled={item.isInShoppingList}
       >
-        {pending || (!pending && formState.success) ? "Adding..." : "Add"}
+        {pending ? "Adding..." : "Add"}
       </button>
-      {hasErrors && (
+      {showErrors && (
         <div className="font-bold text-red-600">{formState.error}</div>
       )}
     </div>

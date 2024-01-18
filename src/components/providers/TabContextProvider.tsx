@@ -2,13 +2,13 @@
 
 import { ReactNode, createContext, useState } from "react";
 
-type ListTabContext = {
+type TabContext = {
   tab: "allItems" | "shop";
   setTab: (tab: "allItems" | "shop") => void;
 };
-export const listTabContext = createContext<ListTabContext | null>(null);
+export const listTabContext = createContext<TabContext | null>(null);
 
-export default function ListTabContextProvider({
+export default function TabContextProvider({
   children,
 }: {
   children: ReactNode;

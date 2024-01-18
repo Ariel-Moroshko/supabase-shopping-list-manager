@@ -1,10 +1,10 @@
 import { Item, List } from "@/types/List";
 import ShoppingListCategory from "./ShoppingListCategory";
 import ClearPickedUpItemsForm from "./ClearPickedUpItemsForm";
+import { useListContext } from "@/hooks/useListContext";
 
-type Props = { list: List };
-
-export default function ShoppingList({ list }: Props) {
+export default function ShoppingList() {
+  const { list } = useListContext();
   const unCheckedList: List = {
     ...list,
     categories: list.categories
@@ -28,11 +28,7 @@ export default function ShoppingList({ list }: Props) {
     <>
       <ol className="flex flex-1 flex-col gap-4 divide-y">
         {unCheckedList.categories.map((category) => (
-          <ShoppingListCategory
-            key={category.id}
-            listId={list.id}
-            category={category}
-          />
+          <ShoppingListCategory key={category.id} category={category} />
         ))}
       </ol>
       {checkedItems.length > 0 && (

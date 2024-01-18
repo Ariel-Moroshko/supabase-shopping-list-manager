@@ -1,11 +1,11 @@
 "use client";
 
-import { useListTabContext } from "@/hooks/useListTabContext";
+import { useTabContext } from "@/hooks/useTabContext";
 import { useTopNavTitleContext } from "@/hooks/useTopNavTitleContext";
 
 export function BottomNav() {
   const { setTitle } = useTopNavTitleContext();
-  const { setTab } = useListTabContext();
+  const { setTab } = useTabContext();
 
   const handleTabClick = (tab: "allItems" | "shop") => {
     setTitle(tab === "allItems" ? "All Items" : "Start Shopping");

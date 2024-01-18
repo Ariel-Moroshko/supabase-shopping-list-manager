@@ -4,7 +4,8 @@ import { getAllItemsInList } from "@/lib/db/utils";
 import { getUserIdFromSession } from "@/lib/supabase/serverClient";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ListTabContextProvider from "@/components/providers/ListTabContextProvider";
+import TabContextProvider from "@/components/providers/TabContextProvider";
+import ListContextProvider from "@/components/providers/ListContextProvider";
 
 type Props = {
   params: {
@@ -25,7 +26,7 @@ export default async function ListPage({ params: { listId } }: Props) {
     return <NoItemsInList listId={list.id} />;
   }
   return (
-    <ListTabContextProvider>
+    <TabContextProvider>
       <div className="flex-1 px-8 py-4">
         <div className="flex gap-8">
           <Link
@@ -41,13 +42,14 @@ export default async function ListPage({ params: { listId } }: Props) {
             Edit items
           </Link>
         </div>
-
-        <List list={list} />
+        <ListContextProvider initialList={list}>
+          <List />
+        </ListContextProvider>
       </div>
       <div className="sticky bottom-0 flex min-h-12 items-center justify-center border-t border-slate-200 bg-white">
         <BottomNav />
       </div>
-    </ListTabContextProvider>
+    </TabContextProvider>
   );
 }
 

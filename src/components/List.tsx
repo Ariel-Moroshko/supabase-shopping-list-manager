@@ -2,17 +2,21 @@
 
 import { Category, Item, List } from "@/types/List";
 import AllItemsList from "./AllItemsList";
-import { useListTabContext } from "@/hooks/useListTabContext";
+import { useTabContext } from "@/hooks/useTabContext";
 import ShoppingList from "./ShoppingList";
 import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browserClient";
-import { RealtimePostgresUpdatePayload } from "@supabase/supabase-js";
+import {
+  REALTIME_CHANNEL_STATES,
+  RealtimeChannel,
+  RealtimePostgresUpdatePayload,
+} from "@supabase/supabase-js";
+import ListContextProvider from "./providers/ListContextProvider";
+import { useListContext } from "@/hooks/useListContext";
 
-type Props = { list: List };
-
-export default function ListPage({ list }: Props) {
-  const { tab } = useListTabContext();
-  const [localList, setLocalList] = useState<List>(list);
+export default function ListPage() {
+  const { tab } = useTabContext();
+  const { updateItem } = useListContext();
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
@@ -22,23 +26,34 @@ export default function ListPage({ list }: Props) {
       console.log(payload);
       if (payload.table === "items") {
         const newItem = payload.new as Item;
-        setLocalList((prevList) => ({
-          ...prevList,
-          categories: prevList.categories.map((category) => {
-            return {
-              ...category,
-              items:
-                category.id === newItem.categoryId
-                  ? category.items.map((item) =>
-                      item.id === newItem.id ? newItem : item,
-                    )
-                  : category.items,
-            };
-          }),
-        }));
+        updateItem(newItem);
       }
     };
 
+    const handleChannelStatusChange = async (
+      status: "SUBSCRIBED" | "TIMED_OUT" | "CLOSED" | "CHANNEL_ERROR",
+      error?: Error,
+    ) => {
+      console.log(
+        "*".repeat(20),
+        new Date().toLocaleString(),
+        "status/error changed. status is:",
+        status,
+        "error is:",
+        error?.name,
+        ":",
+        error?.message,
+      );
+      // if (channel?.state === REALTIME_CHANNEL_STATES.errored) {
+      //   console.log(
+      //     "----> REALTIME_CHANNEL_STATES.errored, removing channel and subscribing again",
+      //   );
+      //   await unSubscribe();
+      //   channel = subscribe();
+      // }
+    };
+
+    console.log("subscribing to channel updates");
     const channel = supabase
       .channel("list-changes")
       .on(
@@ -50,15 +65,18 @@ export default function ListPage({ list }: Props) {
         },
         handleNewItem,
       )
-      .subscribe();
+      .subscribe(handleChannelStatusChange);
+
+    // const unSubscribe = async () => {
+    //   const removeChannel = await supabase.removeChannel(channel!);
+    // };
+
+    // channel = subscribe();
+
     return () => {
+      console.log("removing ws");
       supabase.removeChannel(channel);
     };
-  }, []);
-
-  if (tab === "allItems") {
-    return <AllItemsList list={localList} />;
-  } else {
-    return <ShoppingList list={localList} />;
-  }
+  }, [updateItem]);
+  return tab === "allItems" ? <AllItemsList /> : <ShoppingList />;
 }

@@ -4,14 +4,16 @@ import {
   pickUpItemInShoppingList,
   pickUpItemInShoppingListFormState,
 } from "@/actions/pickUpItemInShoppingList";
+import { useListContext } from "@/hooks/useListContext";
 import { Item } from "@/types/List";
 import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 const initialFormState: pickUpItemInShoppingListFormState = { success: false };
-type Props = { listId: number; item: Item };
+type Props = { item: Item };
 
-export default function ShoppingListItem({ listId, item }: Props) {
+export default function ShoppingListItem({ item }: Props) {
+  const { list } = useListContext();
   const [formState, formAction] = useFormState(
     pickUpItemInShoppingList,
     initialFormState,
@@ -19,7 +21,7 @@ export default function ShoppingListItem({ listId, item }: Props) {
   return (
     <li className="flex gap-4">
       <form action={formAction} className="">
-        <input type="hidden" name="listId" value={listId} />
+        <input type="hidden" name="listId" value={list.id} />
         <FormContents item={item} formState={formState} />
       </form>
       <span className="flex-1">{item.name}</span>
