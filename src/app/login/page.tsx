@@ -1,15 +1,12 @@
-"use client";
-
 import SignInWithGoogle from "@/components/SignInWithGoogle";
-import { useSearchParams } from "next/navigation";
+import { headers } from "next/headers";
 
 export default function Login() {
-  const searchParams = useSearchParams();
-  const redirectedFrom = searchParams.get("redirectedFrom") ?? "/";
+  const host = headers().get("host")!;
   return (
     <div>
       <h1>Login page</h1>
-      <SignInWithGoogle redirectedFrom={redirectedFrom} />
+      <SignInWithGoogle host={host} />
     </div>
   );
 }

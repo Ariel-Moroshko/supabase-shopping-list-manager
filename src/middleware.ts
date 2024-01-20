@@ -11,13 +11,16 @@ export async function middleware(request: NextRequest) {
     error,
   } = await supabase.auth.getSession();
   const publicPaths = ["/login", "/auth/callback"];
-  const currentPath = new URL(request.url).pathname;
+  const currentUrl = new URL(request.url);
+  const currentPath = currentUrl.pathname;
+  const currentOrigin = currentUrl.origin;
+  if (session && currentPath === "/login") {
+    return NextResponse.redirect(`${currentOrigin}/`);
+  }
   const isOnPublicPath = publicPaths.includes(currentPath);
   if (!session && !isOnPublicPath) {
     return NextResponse.redirect(
-      process.env.NEXT_PUBLIC_VERCEL_URL
-        ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/login?redirectedFrom=${currentPath}`
-        : `http://localhost:3000/login?redirectedFrom=${currentPath}`,
+      `${currentOrigin}/login?redirectedFrom=${currentPath}`,
     );
   }
   if (error) {

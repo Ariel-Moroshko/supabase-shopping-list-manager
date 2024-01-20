@@ -1,11 +1,14 @@
 "use client";
 
 import { getSupabaseBrowserClient } from "@/lib/supabase/browserClient";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-type Props = { redirectedFrom: string };
+type Props = { host: string };
 
-export default function SignInWithGoogle({ redirectedFrom }: Props) {
+export default function SignInWithGoogle({ host }: Props) {
+  const searchParams = useSearchParams();
+  const redirectedFrom = searchParams.get("redirectedFrom");
   const [isPending, setIsPending] = useState(false);
   const handleSignInWithGoogle = () => {
     setIsPending(true);
@@ -14,9 +17,10 @@ export default function SignInWithGoogle({ redirectedFrom }: Props) {
       await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: process.env.NEXT_PUBLIC_VERCEL_URL
-            ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/auth/callback?next=${redirectedFrom}`
-            : `http://localhost:3000/auth/callback?next=${redirectedFrom}`,
+          redirectTo:
+            process.env.NEXT_PUBLIC_VERCEL_ENV !== "development"
+              ? `https://${host}/auth/callback?next=${redirectedFrom}`
+              : `http://${host}/auth/callback?next=${redirectedFrom}`,
         },
       });
     };
