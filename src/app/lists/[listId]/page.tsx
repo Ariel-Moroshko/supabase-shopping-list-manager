@@ -5,7 +5,6 @@ import { getUserIdFromSession } from "@/lib/supabase/serverClient";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import TabContextProvider from "@/components/providers/TabContextProvider";
-import ListContextProvider from "@/components/providers/ListContextProvider";
 
 type Props = {
   params: {
@@ -42,9 +41,7 @@ export default async function ListPage({ params: { listId } }: Props) {
             Edit items
           </Link>
         </div>
-        <ListContextProvider initialList={list}>
-          <List />
-        </ListContextProvider>
+        <List list={list} />
       </div>
       <div className="sticky bottom-0 flex min-h-12 items-center justify-center border-t border-slate-200 bg-white">
         <BottomNav />

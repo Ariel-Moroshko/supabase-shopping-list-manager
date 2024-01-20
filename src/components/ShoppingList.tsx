@@ -1,10 +1,11 @@
 import { Item, List } from "@/types/List";
 import ShoppingListCategory from "./ShoppingListCategory";
 import ClearPickedUpItemsForm from "./ClearPickedUpItemsForm";
-import { useListContext } from "@/hooks/useListContext";
+import CancelLastPickedUpItem from "./CancelLastPickedUpItem";
 
-export default function ShoppingList() {
-  const { list } = useListContext();
+type Props = { list: List };
+
+export default function ShoppingList({ list }: Props) {
   const unCheckedList: List = {
     ...list,
     categories: list.categories
@@ -23,17 +24,26 @@ export default function ShoppingList() {
       items: category.items.filter((item) => item.isPickedUp),
     }))
     .filter((category) => category.items.length > 0)
-    .reduce((acc: Item[], curr) => acc.concat(curr.items), []);
+    .reduce((acc: Item[], curr) => acc.concat(curr.items), [])
+    .sort((item1, item2) => (item1.pickedUpAt! < item2.pickedUpAt! ? -1 : 1));
+
   return (
     <>
       <ol className="flex flex-1 flex-col gap-4 divide-y">
         {unCheckedList.categories.map((category) => (
-          <ShoppingListCategory key={category.id} category={category} />
+          <ShoppingListCategory
+            key={category.id}
+            listId={list.id}
+            category={category}
+          />
         ))}
       </ol>
       {checkedItems.length > 0 && (
         <div className="mt-8 flex flex-col">
-          <h2 className="border-t-2 font-bold">Checked</h2>
+          <div className="flex gap-8 border-t-2">
+            <h2 className="font-bold">Checked</h2>
+            <CancelLastPickedUpItem listId={list.id} />
+          </div>
           <ClearPickedUpItemsForm listId={list.id} />
           <ol className="flex flex-col gap-2">
             {checkedItems.map((item) => (

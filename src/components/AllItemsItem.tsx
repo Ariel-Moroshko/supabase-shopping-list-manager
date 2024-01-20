@@ -4,35 +4,17 @@ import {
   addItemToShoppingList,
   addItemToShoppingListFormState,
 } from "@/actions/addItemToShoppingList";
-import { useListContext } from "@/hooks/useListContext";
 import { Item } from "@/types/List";
-import { FormEvent, useLayoutEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 const initialFormState: addItemToShoppingListFormState = { success: false };
-type Props = { item: Item };
+type Props = { listId: number; item: Item };
 
-export default function AllItemsItem({ item }: Props) {
-  const { list, updateItem } = useListContext();
+export default function AllItemsItem({ listId, item }: Props) {
   const [formState, formAction] = useFormState(
     addItemToShoppingList,
     initialFormState,
   );
-  const hasUpdatedList = useRef(false);
-
-  useLayoutEffect(() => {
-    if (formState.success && !hasUpdatedList.current) {
-      updateItem({
-        ...item,
-        isInShoppingList: true,
-      });
-      hasUpdatedList.current = true;
-    }
-  }, [formState, updateItem, formState.success, item]);
-
-  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
-    hasUpdatedList.current = false;
-  };
 
   return (
     <li className="flex items-center">
@@ -44,8 +26,8 @@ export default function AllItemsItem({ item }: Props) {
       {item.isInShoppingList ? (
         <div className="bg-emerald-200 px-4">Added!</div>
       ) : (
-        <form action={formAction} onSubmit={handleFormSubmit} className="">
-          <input type="hidden" name="listId" value={list.id} />
+        <form action={formAction}>
+          <input type="hidden" name="listId" value={listId} />
           <input type="hidden" name="itemId" value={item.id} />
           <FormContents item={item} formState={formState} />
         </form>

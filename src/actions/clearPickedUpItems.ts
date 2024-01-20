@@ -2,6 +2,7 @@
 
 import { clearPickedUpItemsInShoppingList } from "@/lib/db/utils";
 import { getUserIdFromSession } from "@/lib/supabase/serverActionClient";
+import { revalidatePath } from "next/cache";
 
 export type clearPickedUpItemsFormState = {
   success: boolean;
@@ -24,6 +25,7 @@ export const clearPickedUpItems = async (
   try {
     const userId = await getUserIdFromSession();
     await clearPickedUpItemsInShoppingList(userId, listId);
+    revalidatePath(`/lists/${listId}`);
     return { success: true };
   } catch (error) {
     console.error(error);

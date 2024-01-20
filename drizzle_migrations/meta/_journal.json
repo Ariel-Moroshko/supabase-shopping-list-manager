@@ -15,6 +15,20 @@
       "when": 1705439307252,
       "tag": "0001_overrated_captain_america",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1705601904486,
+      "tag": "0002_milky_stephen_strange",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1705602108111,
+      "tag": "0003_absurd_nightmare",
+      "breakpoints": true
     }
   ]
 }

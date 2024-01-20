@@ -3,7 +3,9 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/browserClient";
 import { useState } from "react";
 
-export default function SignInWithGoogle() {
+type Props = { redirectedFrom: string };
+
+export default function SignInWithGoogle({ redirectedFrom }: Props) {
   const [isPending, setIsPending] = useState(false);
   const handleSignInWithGoogle = () => {
     setIsPending(true);
@@ -13,8 +15,8 @@ export default function SignInWithGoogle() {
         provider: "google",
         options: {
           redirectTo: process.env.NEXT_PUBLIC_URL
-            ? `https://${process.env.NEXT_PUBLIC_URL}/auth/callback`
-            : `http://localhost:3000/auth/callback`,
+            ? `https://${process.env.NEXT_PUBLIC_URL}/auth/callback?next=${redirectedFrom}`
+            : `http://localhost:3000/auth/callback?next=${redirectedFrom}`,
         },
       });
     };

@@ -1,27 +1,21 @@
 "use server";
 
-import { addItemToShoppingList as dbAddItemToShoppingList } from "@/lib/db/utils";
+import { cancelLastPickedUpInShoppingList } from "@/lib/db/utils";
 import { getUserIdFromSession } from "@/lib/supabase/serverActionClient";
 import { revalidatePath } from "next/cache";
 
-export type addItemToShoppingListFormState = {
+export type CancelLastPickupFormState = {
   success: boolean;
   error?: string;
 };
 
-export const addItemToShoppingList = async (
-  prevState: addItemToShoppingListFormState,
+export const cancelLastPickedUpItem = async (
+  prevState: CancelLastPickupFormState,
   formData: FormData,
 ) => {
-  const itemId = Number(formData.get("itemId"));
   const listId = Number(formData.get("listId"));
 
-  if (!itemId) {
-    return {
-      success: false,
-      error: "Invalid item id",
-    };
-  } else if (!listId) {
+  if (!listId) {
     return {
       success: false,
       error: "Invalid list id",
@@ -30,7 +24,7 @@ export const addItemToShoppingList = async (
 
   try {
     const userId = await getUserIdFromSession();
-    await dbAddItemToShoppingList(userId, itemId);
+    await cancelLastPickedUpInShoppingList(userId, listId);
     revalidatePath(`/lists/${listId}`);
     return { success: true };
   } catch (error) {

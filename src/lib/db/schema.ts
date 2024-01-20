@@ -100,6 +100,7 @@ export const items = pgTable(
       .notNull(),
     isInShoppingList: boolean("isInShoppingList").notNull().default(false),
     isPickedUp: boolean("isPickedUp").notNull().default(false),
+    pickedUpAt: timestamp("pickedUpAt"),
   },
   (table) => ({
     unq: unique().on(table.name, table.categoryId),

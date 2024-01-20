@@ -16,8 +16,8 @@ export async function middleware(request: NextRequest) {
   if (!session && !isOnPublicPath) {
     return NextResponse.redirect(
       process.env.NEXT_PUBLIC_URL
-        ? `https://${process.env.NEXT_PUBLIC_URL}/login`
-        : "http://localhost:3000/login",
+        ? `https://${process.env.NEXT_PUBLIC_URL}/login?redirectedFrom=${currentPath}`
+        : `http://localhost:3000/login?redirectedFrom=${currentPath}`,
     );
   }
   if (error) {

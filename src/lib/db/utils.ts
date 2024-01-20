@@ -136,43 +136,35 @@ export const createItemInCategory = async (
   await db.insert(items).values({ name: itemName, categoryId });
 };
 
-export const addItemToShoppingList = async (
-  userId: string,
-  listId: number,
-  itemId: number,
-) => {
+export const addItemToShoppingList = async (userId: string, itemId: number) => {
   await db.execute(sql`
   UPDATE items
   SET 
     "isInShoppingList" = true
   FROM 
     categories
-    INNER JOIN lists ON categories."listId" = lists.id
-    INNER JOIN "usersLists" ON "usersLists"."listId" = lists.id
+    INNER JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
   WHERE "usersLists"."userId" = ${userId}
-    AND lists.id = ${listId}
     AND items."categoryId" = categories.id
-    AND items.id = ${itemId};
+    AND items.id = ${itemId}
   `);
 };
 
 export const pickUpItemInShoppingList = async (
   userId: string,
-  listId: number,
   itemId: number,
 ) => {
   await db.execute(sql`
   UPDATE items
   SET 
-    "isPickedUp" = true
+    "isPickedUp" = true,
+    "pickedUpAt" = CURRENT_TIMESTAMP
   FROM 
     categories
-    INNER JOIN lists ON categories."listId" = lists.id
-    INNER JOIN "usersLists" ON "usersLists"."listId" = lists.id
+    INNER JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
   WHERE "usersLists"."userId" = ${userId}
-    AND lists.id = ${listId}
     AND items."categoryId" = categories.id
-    AND items.id = ${itemId};
+    AND items.id = ${itemId}
   `);
 };
 
@@ -184,15 +176,37 @@ export const clearPickedUpItemsInShoppingList = async (
   UPDATE items
   SET
     "isPickedUp" = false,
-    "isInShoppingList" = false
+    "isInShoppingList" = false,
+    "pickedUpAt" = NULL
   FROM
     categories
-    INNER JOIN lists ON categories."listId" = lists.id
-    INNER JOIN "usersLists" ON "usersLists"."listId" = lists.id
+    INNER JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
   WHERE
     items."isPickedUp" = true
     and "usersLists"."userId" = ${userId}
-    and lists.id = ${listId}
+    and "usersLists"."listId" = ${listId}
     and items."categoryId" = categories.id;
+  `);
+};
+
+export const cancelLastPickedUpInShoppingList = async (
+  userId: string,
+  listId: number,
+) => {
+  await db.execute(sql`
+  UPDATE items
+  SET "isPickedUp" = false, "pickedUpAt" = NULL
+  FROM (
+    SELECT items.id
+    FROM items
+    JOIN categories ON items."categoryId" = categories.id
+    JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
+    WHERE items."isPickedUp" = true
+      AND "usersLists"."userId" = ${userId}
+      AND "usersLists"."listId" = ${listId}
+    ORDER BY items."pickedUpAt" DESC
+    LIMIT 1
+  ) AS "recentPickedUpItem"
+  WHERE items.id = "recentPickedUpItem".id;
   `);
 };

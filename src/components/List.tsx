@@ -1,82 +1,117 @@
 "use client";
 
-import { Category, Item, List } from "@/types/List";
+import { List } from "@/types/List";
 import AllItemsList from "./AllItemsList";
 import { useTabContext } from "@/hooks/useTabContext";
 import ShoppingList from "./ShoppingList";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browserClient";
 import {
   REALTIME_CHANNEL_STATES,
-  RealtimeChannel,
-  RealtimePostgresUpdatePayload,
+  RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js";
-import ListContextProvider from "./providers/ListContextProvider";
-import { useListContext } from "@/hooks/useListContext";
+import { useRouter } from "next/navigation";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import SignOut from "./SignOut";
 
-export default function ListPage() {
+type Props = { list: List };
+
+export default function ListPage({ list }: Props) {
   const { tab } = useTabContext();
-  const { updateItem } = useListContext();
+  const router = useRouter();
+  const networkStatus = useNetworkStatus();
 
   useEffect(() => {
-    const supabase = getSupabaseBrowserClient();
-    const handleNewItem = (
-      payload: RealtimePostgresUpdatePayload<{ [key: string]: any }>,
+    let supabase = getSupabaseBrowserClient();
+    const handleRealTimeEvent = (
+      payload: RealtimePostgresChangesPayload<{
+        [key: string]: any;
+      }>,
     ) => {
       console.log(payload);
-      if (payload.table === "items") {
-        const newItem = payload.new as Item;
-        updateItem(newItem);
-      }
+      router.refresh();
     };
 
-    const handleChannelStatusChange = async (
-      status: "SUBSCRIBED" | "TIMED_OUT" | "CLOSED" | "CHANNEL_ERROR",
-      error?: Error,
-    ) => {
-      console.log(
-        "*".repeat(20),
-        new Date().toLocaleString(),
-        "status/error changed. status is:",
-        status,
-        "error is:",
-        error?.name,
-        ":",
-        error?.message,
-      );
-      // if (channel?.state === REALTIME_CHANNEL_STATES.errored) {
-      //   console.log(
-      //     "----> REALTIME_CHANNEL_STATES.errored, removing channel and subscribing again",
-      //   );
-      //   await unSubscribe();
-      //   channel = subscribe();
-      // }
+    const subscribeToUpdates = () => {
+      return supabase
+        .channel("list-changes")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "items",
+          },
+          handleRealTimeEvent,
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "categories",
+          },
+          handleRealTimeEvent,
+        )
+        .subscribe(
+          async (
+            status: "SUBSCRIBED" | "TIMED_OUT" | "CLOSED" | "CHANNEL_ERROR",
+            error?: Error,
+          ) => {
+            console.log(
+              "*".repeat(20),
+              new Date().toLocaleString(),
+              "status/error changed. status is:",
+              status,
+              "error is:",
+              error?.name,
+              ":",
+              error?.message,
+            );
+            if (channel.state === REALTIME_CHANNEL_STATES.errored) {
+              console.log(
+                "----> REALTIME_CHANNEL_STATES.errored, removing channel and subscribing again",
+              );
+            }
+            if (status === "CLOSED" && !isReSubscribing) {
+              console.log(
+                "***** channel was CLOSED! removing it and resubscribing...",
+              );
+              isReSubscribing = true;
+              await supabase.removeChannel(channel);
+              const authResponse = await supabase.auth.refreshSession();
+              supabase = getSupabaseBrowserClient();
+              console.log("got authResponse=", authResponse);
+              channel = subscribeToUpdates();
+              isReSubscribing = false;
+            }
+          },
+        );
     };
 
     console.log("subscribing to channel updates");
-    const channel = supabase
-      .channel("list-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "items",
-        },
-        handleNewItem,
-      )
-      .subscribe(handleChannelStatusChange);
-
-    // const unSubscribe = async () => {
-    //   const removeChannel = await supabase.removeChannel(channel!);
-    // };
-
-    // channel = subscribe();
+    let isReSubscribing = false;
+    let channel = subscribeToUpdates();
 
     return () => {
       console.log("removing ws");
+      isReSubscribing = true;
       supabase.removeChannel(channel);
     };
-  }, [updateItem]);
-  return tab === "allItems" ? <AllItemsList /> : <ShoppingList />;
+  }, [router]);
+  return (
+    <>
+      <SignOut />
+      {networkStatus === "offline" && (
+        <div className="w-full rounded-md bg-red-500 py-3 text-center font-bold text-red-50 shadow-lg">
+          No network connection
+        </div>
+      )}
+      {tab === "allItems" ? (
+        <AllItemsList list={list} />
+      ) : (
+        <ShoppingList list={list} />
+      )}
+    </>
+  );
 }

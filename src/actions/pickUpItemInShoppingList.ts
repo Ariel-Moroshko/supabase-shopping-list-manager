@@ -2,6 +2,7 @@
 
 import { pickUpItemInShoppingList as dbPickUpItemInShoppingList } from "@/lib/db/utils";
 import { getUserIdFromSession } from "@/lib/supabase/serverActionClient";
+import { revalidatePath } from "next/cache";
 
 export type pickUpItemInShoppingListFormState = {
   success: boolean;
@@ -29,7 +30,8 @@ export const pickUpItemInShoppingList = async (
 
   try {
     const userId = await getUserIdFromSession();
-    await dbPickUpItemInShoppingList(userId, listId, itemId);
+    await dbPickUpItemInShoppingList(userId, itemId);
+    revalidatePath(`/lists/${listId}`);
     return { success: true };
   } catch (error) {
     console.error(error);
