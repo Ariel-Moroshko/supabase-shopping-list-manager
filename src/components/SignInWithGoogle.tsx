@@ -14,8 +14,8 @@ export default function SignInWithGoogle({ redirectedFrom }: Props) {
       await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: process.env.NEXT_PUBLIC_URL
-            ? `https://${process.env.NEXT_PUBLIC_URL}/auth/callback?next=${redirectedFrom}`
+          redirectTo: process.env.NEXT_PUBLIC_VERCEL_URL
+            ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/auth/callback?next=${redirectedFrom}`
             : `http://localhost:3000/auth/callback?next=${redirectedFrom}`,
         },
       });
