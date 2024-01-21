@@ -2,25 +2,30 @@
 
 import { createCategoryInList, getAllCategoriesInList } from "@/lib/db/utils";
 import { getUserIdFromSession } from "@/lib/supabase/serverActionClient";
-import { revalidatePath } from "next/cache";
+import { CategoryWithoutItems } from "@/types/List";
 
-export type CreateCategoryFormState = {
-  error?: string;
-};
+type ReturnType =
+  | {
+      success: true;
+      newCategory: CategoryWithoutItems;
+    }
+  | {
+      success: false;
+      error: string;
+    };
 
 export const createCategory = async (
-  prevState: CreateCategoryFormState,
-  formData: FormData,
-) => {
-  const categoryName = String(formData.get("categoryName"));
-  const listId = Number(formData.get("listId"));
-
+  listId: number,
+  categoryName: string,
+): Promise<ReturnType> => {
   if (!categoryName) {
     return {
+      success: false,
       error: "Category name cant be empty",
     };
   } else if (!listId) {
     return {
+      success: false,
       error: "Invalid list id",
     };
   }
@@ -30,6 +35,7 @@ export const createCategory = async (
     const listWithCategories = await getAllCategoriesInList(userId, listId);
     if (!listWithCategories) {
       return {
+        success: false,
         error: "Not allowed to edit this list",
       };
     }
@@ -38,16 +44,17 @@ export const createCategory = async (
     );
     if (categoryNameAlreadyExists) {
       return {
+        success: false,
         error: "This category name already exists",
       };
     }
 
-    await createCategoryInList(listId, categoryName);
-    revalidatePath(`/lists/${listId}/categories`);
-    return {};
+    const newCategory = await createCategoryInList(listId, categoryName);
+    return { success: true, newCategory };
   } catch (error) {
     console.error(error);
     return {
+      success: false,
       error: "A db error occured",
     };
   }

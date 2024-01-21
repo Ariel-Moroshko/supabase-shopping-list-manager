@@ -1,4 +1,4 @@
-import AddCategoryForm from "@/components/AddCategoryForm";
+import CategoriesPage from "@/components/CategoriesPage";
 import { getAllCategoriesInList } from "@/lib/db/utils";
 import { getUserIdFromSession } from "@/lib/supabase/serverClient";
 import Link from "next/link";
@@ -21,16 +21,14 @@ export default async function Categories({ params: { listId } }: Props) {
   }
 
   return (
-    <div className="px-8 py-8">
+    <div className="py-8">
       <Link href={`/lists/${listId}`} className="font-bold underline">
         Go back to list
       </Link>
-      <AddCategoryForm listId={list.id} />
-      <ol>
-        {list?.categories.map((category) => (
-          <li key={category.id}>{category.name}</li>
-        ))}
-      </ol>
+      <CategoriesPage
+        listId={Number(listId)}
+        initialCategories={list.categories}
+      />
     </div>
   );
 }

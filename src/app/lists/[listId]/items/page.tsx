@@ -1,4 +1,3 @@
-import AddCategoryForm from "@/components/AddCategoryForm";
 import AddItemForm from "@/components/AddItemForm";
 import { getAllItemsInList } from "@/lib/db/utils";
 import { getUserIdFromSession } from "@/lib/supabase/serverClient";

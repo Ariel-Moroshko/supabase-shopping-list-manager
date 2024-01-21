@@ -34,3 +34,5 @@ export type List = InferResultType<
   "lists",
   { categories: { with: { items: true } } }
 >;
+
+export type CategoryWithoutItems = Omit<Category, "items">;

@@ -5,7 +5,6 @@ import PickedUpItems from "./PickedUpItems";
 type Props = { list: List };
 
 export default function ShoppingList({ list }: Props) {
-  console.log("here!!");
   const unCheckedList: List = {
     ...list,
     categories: list.categories

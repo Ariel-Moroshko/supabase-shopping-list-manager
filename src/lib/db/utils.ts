@@ -122,11 +122,17 @@ export const createCategoryInList = async (
         .limit(1)
     )[0]?.position ?? 0;
 
-  await db.insert(categories).values({
-    listId,
-    name: categoryName,
-    position: lastCategoryPosition + 1,
-  });
+  const newCategory = (
+    await db
+      .insert(categories)
+      .values({
+        listId,
+        name: categoryName,
+        position: lastCategoryPosition + 1,
+      })
+      .returning()
+  )[0];
+  return newCategory;
 };
 
 export const createItemInCategory = async (
