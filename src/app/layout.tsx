@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import TopNav from "@/components/TopNav";
 import TopNavTitleContextProvider from "@/components/providers/TopNavTitleContextProvider";
+import { ReactQueryProvider } from "@/components/providers/ReactQueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +25,7 @@ export default function RootLayout({
         <div className="mx-auto flex min-h-dvh max-w-lg flex-col bg-white shadow-lg">
           <TopNavTitleContextProvider>
             <TopNav />
-            {children}
+            <ReactQueryProvider>{children}</ReactQueryProvider>
           </TopNavTitleContextProvider>
         </div>
       </body>

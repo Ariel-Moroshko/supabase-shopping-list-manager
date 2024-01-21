@@ -1,18 +1,18 @@
 "use server";
 
-import { clearPickedUpItemsInShoppingList } from "@/lib/db/utils";
+import { undoPickedUpItemInShoppingList } from "@/lib/db/utils";
 import { getUserIdFromSession } from "@/lib/supabase/serverActionClient";
 
-export const clearPickedUpItems = async (listId: number) => {
-  if (!listId) {
+export const undoPickedUpItem = async (itemId: number) => {
+  if (!itemId) {
     return {
       success: false,
-      error: "Invalid list id",
+      error: "Invalid item id",
     };
   }
   try {
     const userId = await getUserIdFromSession();
-    await clearPickedUpItemsInShoppingList(userId, listId);
+    await undoPickedUpItemInShoppingList(userId, itemId);
     return { success: true };
   } catch (error) {
     console.error(error);

@@ -21,6 +21,7 @@ export default async function ListPage({ params: { listId } }: Props) {
   if (!list) {
     notFound();
   }
+
   if (list?.categories.length === 0) {
     return <NoItemsInList listId={list.id} />;
   }
@@ -41,7 +42,7 @@ export default async function ListPage({ params: { listId } }: Props) {
             Edit items
           </Link>
         </div>
-        <List list={list} />
+        <List initialList={list} />
       </div>
       <div className="sticky bottom-0 flex min-h-12 items-center justify-center border-t border-slate-200 bg-white">
         <BottomNav />

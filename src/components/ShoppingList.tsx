@@ -1,11 +1,11 @@
 import { Item, List } from "@/types/List";
 import ShoppingListCategory from "./ShoppingListCategory";
-import ClearPickedUpItemsForm from "./ClearPickedUpItemsForm";
-import CancelLastPickedUpItem from "./CancelLastPickedUpItem";
+import PickedUpItems from "./PickedUpItems";
 
 type Props = { list: List };
 
 export default function ShoppingList({ list }: Props) {
+  console.log("here!!");
   const unCheckedList: List = {
     ...list,
     categories: list.categories
@@ -39,23 +39,7 @@ export default function ShoppingList({ list }: Props) {
         ))}
       </ol>
       {checkedItems.length > 0 && (
-        <div className="mt-8 flex flex-col">
-          <div className="flex gap-8 border-t-2">
-            <h2 className="font-bold">Checked</h2>
-            <CancelLastPickedUpItem listId={list.id} />
-          </div>
-          <ClearPickedUpItemsForm listId={list.id} />
-          <ol className="flex flex-col gap-2">
-            {checkedItems.map((item) => (
-              <li
-                key={item.id}
-                className="decoration- line-through decoration-red-500"
-              >
-                {item.name}
-              </li>
-            ))}
-          </ol>
-        </div>
+        <PickedUpItems listId={list.id} items={checkedItems} />
       )}
     </>
   );

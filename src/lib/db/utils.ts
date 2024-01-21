@@ -153,12 +153,13 @@ export const addItemToShoppingList = async (userId: string, itemId: number) => {
 export const pickUpItemInShoppingList = async (
   userId: string,
   itemId: number,
+  pickUpTime: string,
 ) => {
   await db.execute(sql`
   UPDATE items
   SET 
     "isPickedUp" = true,
-    "pickedUpAt" = CURRENT_TIMESTAMP
+    "pickedUpAt" = ${pickUpTime}
   FROM 
     categories
     INNER JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
@@ -189,24 +190,42 @@ export const clearPickedUpItemsInShoppingList = async (
   `);
 };
 
-export const cancelLastPickedUpInShoppingList = async (
+// export const undoLastPickedUpInShoppingList = async (
+//   userId: string,
+//   listId: number,
+// ) => {
+//   await db.execute(sql`
+//   UPDATE items
+//   SET "isPickedUp" = false, "pickedUpAt" = NULL
+//   FROM (
+//     SELECT items.id
+//     FROM items
+//     JOIN categories ON items."categoryId" = categories.id
+//     JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
+//     WHERE items."isPickedUp" = true
+//       AND "usersLists"."userId" = ${userId}
+//       AND "usersLists"."listId" = ${listId}
+//     ORDER BY items."pickedUpAt" DESC
+//     LIMIT 1
+//   ) AS "recentPickedUpItem"
+//   WHERE items.id = "recentPickedUpItem".id;
+//   `);
+// };
+
+export const undoPickedUpItemInShoppingList = async (
   userId: string,
-  listId: number,
+  itemId: number,
 ) => {
   await db.execute(sql`
   UPDATE items
-  SET "isPickedUp" = false, "pickedUpAt" = NULL
-  FROM (
-    SELECT items.id
-    FROM items
-    JOIN categories ON items."categoryId" = categories.id
-    JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
-    WHERE items."isPickedUp" = true
-      AND "usersLists"."userId" = ${userId}
-      AND "usersLists"."listId" = ${listId}
-    ORDER BY items."pickedUpAt" DESC
-    LIMIT 1
-  ) AS "recentPickedUpItem"
-  WHERE items.id = "recentPickedUpItem".id;
+  SET 
+    "isPickedUp" = false,
+    "pickedUpAt" = null
+  FROM 
+    categories
+    INNER JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
+  WHERE "usersLists"."userId" = ${userId}
+    AND items."categoryId" = categories.id
+    AND items.id = ${itemId}
   `);
 };

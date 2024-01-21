@@ -1,20 +1,16 @@
 "use server";
 
-import { addItemToShoppingList as dbAddItemToShoppingList } from "@/lib/db/utils";
+import { pickUpItemInShoppingList } from "@/lib/db/utils";
 import { getUserIdFromSession } from "@/lib/supabase/serverActionClient";
 
 type ReturnType =
   | {
       success: true;
+      pickUpTime: string;
     }
-  | {
-      success: false;
-      error: string;
-    };
+  | { success: false; error: string };
 
-export const addItemToShoppingList = async (
-  itemId: number,
-): Promise<ReturnType> => {
+export const pickUpItem = async (itemId: number): Promise<ReturnType> => {
   if (!itemId) {
     return {
       success: false,
@@ -23,8 +19,9 @@ export const addItemToShoppingList = async (
   }
   try {
     const userId = await getUserIdFromSession();
-    await dbAddItemToShoppingList(userId, itemId);
-    return { success: true };
+    const pickUpTime = new Date().toISOString();
+    await pickUpItemInShoppingList(userId, itemId, pickUpTime);
+    return { success: true, pickUpTime };
   } catch (error) {
     console.error(error);
     return {
