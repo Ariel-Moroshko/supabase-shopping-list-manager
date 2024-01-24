@@ -22,9 +22,10 @@ export default async function Categories({ params: { listId } }: Props) {
 
   return (
     <div className="py-8">
-      <Link href={`/lists/${listId}`} className="font-bold underline">
+      <Link href={`/lists/${listId}`} className="px-4 font-bold underline">
         Go back to list
       </Link>
+
       <CategoriesPage
         listId={Number(listId)}
         initialCategories={list.categories}

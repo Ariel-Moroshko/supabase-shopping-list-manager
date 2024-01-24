@@ -4,6 +4,8 @@ import { useClearPickedUpItems } from "@/hooks/useClearPickedUpItems";
 import { List } from "@/types/List";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
 
 type Props = {
   listId: number;
@@ -52,14 +54,22 @@ export default function ClearPickedUpItems({
 
   return (
     <div>
-      <button
+      <Button
         type="submit"
         onClick={() => handleClear()}
         disabled={pending || !isActive}
-        className="w-fit border border-slate-800 px-8 py-4"
+        variant="destructive"
+        className="flex min-w-32 items-center justify-center gap-2"
       >
-        {pending ? "Clearing items..." : "Clear items"}
-      </button>
+        {pending ? (
+          <>
+            <Loader2 className="animate-spin" size={18} />
+            <span>Clearing...</span>
+          </>
+        ) : (
+          "Clear items"
+        )}
+      </Button>
       {error && <span className="font-bold text-red-600">Error: {error}</span>}
     </div>
   );

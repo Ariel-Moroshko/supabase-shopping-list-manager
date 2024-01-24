@@ -13,7 +13,7 @@ export default function PickedUpItemsActions({
   const [isClearing, setIsClearing] = useState(false);
 
   return (
-    <>
+    <div className="flex gap-4 px-2">
       <UndoPickedUpItem
         listId={listId}
         lastPickedUpItemId={lastPickedUpItemId}
@@ -25,6 +25,6 @@ export default function PickedUpItemsActions({
         setIsClearing={setIsClearing}
         isActive={!isUndoing}
       />
-    </>
+    </div>
   );
 }

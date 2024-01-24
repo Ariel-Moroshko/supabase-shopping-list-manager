@@ -2,30 +2,35 @@
 
 import { createItemInCategory, getAllItemsInList } from "@/lib/db/utils";
 import { getUserIdFromSession } from "@/lib/supabase/serverActionClient";
-import { revalidatePath } from "next/cache";
+import { Item } from "@/types/List";
 
-export type CreateItemFormState = {
-  error?: string;
-};
-
+type ReturnType =
+  | {
+      success: true;
+      newItem: Item;
+    }
+  | {
+      success: false;
+      error: string;
+    };
 export const createItem = async (
-  prevState: CreateItemFormState,
-  formData: FormData,
-) => {
-  const itemName = String(formData.get("itemName"));
-  const categoryId = Number(formData.get("categoryId"));
-  const listId = Number(formData.get("listId"));
-
+  listId: number,
+  categoryId: number,
+  itemName: string,
+): Promise<ReturnType> => {
   if (!itemName) {
     return {
+      success: false,
       error: "Item name cant be empty",
     };
   } else if (!categoryId) {
     return {
+      success: false,
       error: "Invalid category id",
     };
   } else if (!listId) {
     return {
+      success: false,
       error: "Invalid list id",
     };
   }
@@ -35,11 +40,13 @@ export const createItem = async (
     const list = await getAllItemsInList(userId, listId);
     if (!list) {
       return {
+        success: false,
         error: "Not allowed to edit this list",
       };
     }
     if (!list.categories.some((category) => category.id === categoryId)) {
       return {
+        success: false,
         error: "Unknown category id",
       };
     }
@@ -48,16 +55,17 @@ export const createItem = async (
     });
     if (itemNameAlreadyExists) {
       return {
+        success: false,
         error: "This item already exists",
       };
     }
 
-    await createItemInCategory(categoryId, itemName);
-    revalidatePath(`/lists/${listId}/items`);
-    return {};
+    const newItem = await createItemInCategory(categoryId, itemName);
+    return { success: true, newItem };
   } catch (error) {
     console.error(error);
     return {
+      success: false,
       error: "A db error occured",
     };
   }

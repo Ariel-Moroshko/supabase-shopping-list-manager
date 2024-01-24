@@ -1,6 +1,8 @@
 "use client";
 
 import { CreateListFormState, createList } from "@/actions/createList";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useFormState, useFormStatus } from "react-dom";
 
 const initialFormState: CreateListFormState = {};
@@ -20,24 +22,16 @@ function FormContents({ formState }: { formState: CreateListFormState }) {
   const hasErrors = !pending && formState.error;
   return (
     <>
-      <div>
+      <div className="flex flex-col gap-2">
         <label htmlFor="listName">List name</label>
-        <input
-          type="text"
-          id="listName"
-          name="listName"
-          className="border border-slate-500"
-        />
+        <Input type="text" id="listName" name="listName" />
         {hasErrors && (
           <div className="font-bold text-red-600">{formState.error}</div>
         )}
       </div>
-      <button
-        type="submit"
-        className="max-w-36 border border-slate-800 px-8 py-4"
-      >
+      <Button type="submit">
         {pending ? "Creating list..." : "Create list"}
-      </button>
+      </Button>
     </>
   );
 }

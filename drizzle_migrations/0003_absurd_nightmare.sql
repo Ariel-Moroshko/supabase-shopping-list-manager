@@ -1,1 +1,0 @@
-ALTER TABLE "items" ALTER COLUMN "pickedUpAt" SET DATA TYPE timestamp;

@@ -1,11 +1,10 @@
 import SignInWithGoogle from "@/components/SignInWithGoogle";
 import { headers } from "next/headers";
 
-export default function Login() {
+export default async function Login() {
   const host = headers().get("host")!;
   return (
-    <div>
-      <h1>Login page</h1>
+    <div className="mt-8 flex justify-center">
       <SignInWithGoogle host={host} />
     </div>
   );

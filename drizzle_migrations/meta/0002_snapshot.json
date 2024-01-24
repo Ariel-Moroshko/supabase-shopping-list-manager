@@ -1,6 +1,6 @@
 {
-  "id": "461d5e8b-d78f-4b6b-8588-b6a457a3ba62",
-  "prevId": "6b9ab9b1-86e1-4289-bbe5-23ea7b44f65f",
+  "id": "5ab89b1b-e649-4c98-ab6c-ac3d318012fe",
+  "prevId": "c0b7f9a0-063d-4f23-91c0-7a8b028e52f5",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -107,9 +107,16 @@
         },
         "pickedUpAt": {
           "name": "pickedUpAt",
-          "type": "date",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
         }
       },
       "indexes": {
@@ -206,7 +213,7 @@
           "name": "email",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "image": {
           "name": "image",

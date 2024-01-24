@@ -14,7 +14,7 @@ import { relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey(),
-  email: text("email").notNull(),
+  email: text("email"),
   image: text("image"),
   mainListId: integer("mainListId").references(() => lists.id),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
@@ -101,6 +101,7 @@ export const items = pgTable(
     isInShoppingList: boolean("isInShoppingList").notNull().default(false),
     isPickedUp: boolean("isPickedUp").notNull().default(false),
     pickedUpAt: timestamp("pickedUpAt"),
+    note: text("note").notNull().default(""),
   },
   (table) => ({
     unq: unique().on(table.name, table.categoryId),

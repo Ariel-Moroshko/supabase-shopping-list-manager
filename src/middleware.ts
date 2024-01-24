@@ -13,14 +13,13 @@ export async function middleware(request: NextRequest) {
   const publicPaths = ["/login", "/auth/callback"];
   const currentUrl = new URL(request.url);
   const currentPath = currentUrl.pathname;
+  const searchParams = currentUrl.search;
   const currentOrigin = currentUrl.origin;
-  if (session && currentPath === "/login") {
-    return NextResponse.redirect(`${currentOrigin}/`);
-  }
+
   const isOnPublicPath = publicPaths.includes(currentPath);
   if (!session && !isOnPublicPath) {
     return NextResponse.redirect(
-      `${currentOrigin}/login?redirectedFrom=${currentPath}`,
+      `${currentOrigin}/login?redirectedFrom=${currentPath}${searchParams}`,
     );
   }
   if (error) {

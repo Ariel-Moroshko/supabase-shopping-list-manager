@@ -3,8 +3,7 @@ CREATE TABLE IF NOT EXISTS "categories" (
 	"name" text NOT NULL,
 	"listId" integer NOT NULL,
 	"position" integer NOT NULL,
-	CONSTRAINT "categories_name_listId_unique" UNIQUE("name","listId"),
-	CONSTRAINT "categories_position_listId_unique" UNIQUE("position","listId")
+	CONSTRAINT "categories_name_listId_unique" UNIQUE("name","listId")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "items" (
@@ -13,6 +12,7 @@ CREATE TABLE IF NOT EXISTS "items" (
 	"categoryId" integer NOT NULL,
 	"isInShoppingList" boolean DEFAULT false NOT NULL,
 	"isPickedUp" boolean DEFAULT false NOT NULL,
+	"pickedUpAt" timestamp,
 	CONSTRAINT "items_name_categoryId_unique" UNIQUE("name","categoryId")
 );
 --> statement-breakpoint
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS "lists" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
 	"id" uuid PRIMARY KEY NOT NULL,
-	"email" text NOT NULL,
+	"email" text,
 	"image" text,
 	"mainListId" integer,
 	"createdAt" timestamp DEFAULT now() NOT NULL

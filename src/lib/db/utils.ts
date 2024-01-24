@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
 import { db } from ".";
 import { sql } from "drizzle-orm";
 import { categories, items, lists, users, usersLists } from "./schema";
@@ -139,7 +139,9 @@ export const createItemInCategory = async (
   categoryId: number,
   itemName: string,
 ) => {
-  await db.insert(items).values({ name: itemName, categoryId });
+  return (
+    await db.insert(items).values({ name: itemName, categoryId }).returning()
+  )[0];
 };
 
 export const addItemToShoppingList = async (userId: string, itemId: number) => {
@@ -196,28 +198,6 @@ export const clearPickedUpItemsInShoppingList = async (
   `);
 };
 
-// export const undoLastPickedUpInShoppingList = async (
-//   userId: string,
-//   listId: number,
-// ) => {
-//   await db.execute(sql`
-//   UPDATE items
-//   SET "isPickedUp" = false, "pickedUpAt" = NULL
-//   FROM (
-//     SELECT items.id
-//     FROM items
-//     JOIN categories ON items."categoryId" = categories.id
-//     JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
-//     WHERE items."isPickedUp" = true
-//       AND "usersLists"."userId" = ${userId}
-//       AND "usersLists"."listId" = ${listId}
-//     ORDER BY items."pickedUpAt" DESC
-//     LIMIT 1
-//   ) AS "recentPickedUpItem"
-//   WHERE items.id = "recentPickedUpItem".id;
-//   `);
-// };
-
 export const undoPickedUpItemInShoppingList = async (
   userId: string,
   itemId: number,
@@ -233,5 +213,161 @@ export const undoPickedUpItemInShoppingList = async (
   WHERE "usersLists"."userId" = ${userId}
     AND items."categoryId" = categories.id
     AND items.id = ${itemId}
+  `);
+};
+
+export const areAllCategoriesInUsersList = async (
+  userId: string,
+  listId: number,
+  categoriesIds: number[],
+) => {
+  const result = await db
+    .select({ id: categories.id })
+    .from(categories)
+    .innerJoin(usersLists, eq(usersLists.listId, categories.listId))
+    .where(
+      and(
+        inArray(categories.id, categoriesIds),
+        and(eq(usersLists.listId, listId), eq(usersLists.userId, userId)),
+      ),
+    );
+  return result.length === categoriesIds.length;
+};
+
+export const reorderCategoriesInList = async (
+  listId: number,
+  categoriesIds: number[],
+) => {
+  const values = categoriesIds
+    .map((id, index) => `(${id}, ${index + 1})`)
+    .join(",");
+  await db.execute(sql`
+    UPDATE categories
+    SET
+      position = new_positions.position
+    FROM
+      (
+        values ${sql.raw(values)}
+      ) as new_positions (id, position)
+    WHERE
+      categories.id = new_positions.id
+      and categories."listId" = ${listId};
+    `);
+};
+
+export const getListByIdAndInvitationKey = async (
+  id: number,
+  invitationKey: string,
+) => {
+  try {
+    return (
+      await db
+        .select({ id: lists.id })
+        .from(lists)
+        .where(and(eq(lists.id, id), eq(lists.invitationKey, invitationKey)))
+    )[0];
+  } catch (error) {
+    return null;
+  }
+};
+
+export const hasUserListId = async (userId: string, listId: number) => {
+  return (
+    await db
+      .select()
+      .from(usersLists)
+      .where(and(eq(usersLists.userId, userId), eq(usersLists.listId, listId)))
+  )[0];
+};
+
+export const joinUserToList = async (userId: string, listId: number) => {
+  await db.transaction(async (tx) => {
+    await tx.insert(usersLists).values({ listId, userId });
+
+    // update mainListId if this is the user's first list
+    await tx
+      .update(users)
+      .set({ mainListId: listId })
+      .where(and(eq(users.id, userId), isNull(users.mainListId)));
+  });
+};
+
+export const editItemNote = async (
+  userId: string,
+  itemId: number,
+  note: string,
+) => {
+  await db.execute(sql`
+  UPDATE items
+  SET 
+    note = ${note}
+  FROM 
+    categories
+    INNER JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
+  WHERE "usersLists"."userId" = ${userId}
+    AND items."categoryId" = categories.id
+    AND items.id = ${itemId}
+  `);
+};
+
+export const deleteItem = async (userId: string, itemId: number) => {
+  await db.execute(sql`
+  DELETE FROM 
+    items USING categories
+    INNER JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
+  WHERE 
+    "usersLists"."userId" = ${userId}
+    AND items."categoryId" = categories.id
+    AND items.id = ${itemId}
+  `);
+};
+
+export const isUserAllowedToEditCategory = async (
+  userId: string,
+  categoryId: number,
+) => {
+  return (
+    await db.execute(sql`
+    SELECT 1 
+    FROM categories 
+    INNER JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
+    WHERE "usersLists"."userId" = ${userId}
+      AND categories.id = ${categoryId}
+  `)
+  )[0];
+};
+
+export const isCategoryNameExistsInList = async (
+  categoryId: number,
+  categoryName: string,
+) => {
+  const { listId } = (
+    await db
+      .select({ listId: categories.listId })
+      .from(categories)
+      .where(eq(categories.id, categoryId))
+  )[0];
+  const exists = await db
+    .select()
+    .from(categories)
+    .where(
+      and(eq(categories.name, categoryName), eq(categories.listId, listId)),
+    );
+  return exists.length > 0;
+};
+
+export const updateCategoryName = async (
+  userId: string,
+  categoryId: number,
+  categoryName: string,
+) => {
+  await db.execute(sql`
+  UPDATE categories
+  SET 
+    name = ${categoryName}
+  FROM "usersLists"
+  WHERE "usersLists"."userId" = ${userId}
+    AND categories."listId" = "usersLists"."listId"
+    AND categories.id = ${categoryId}
   `);
 };

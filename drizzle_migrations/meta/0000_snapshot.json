@@ -1,5 +1,5 @@
 {
-  "id": "f12485ab-a8f1-4fd6-b932-b03e97fefeeb",
+  "id": "44c36965-b8d3-4528-ad84-5a4037985a26",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -66,14 +66,6 @@
             "name",
             "listId"
           ]
-        },
-        "categories_position_listId_unique": {
-          "name": "categories_position_listId_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "position",
-            "listId"
-          ]
         }
       }
     },
@@ -112,6 +104,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": false
+        },
+        "pickedUpAt": {
+          "name": "pickedUpAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -208,7 +206,7 @@
           "name": "email",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "image": {
           "name": "image",

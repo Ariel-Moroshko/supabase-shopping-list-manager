@@ -5,6 +5,8 @@ import { getUserIdFromSession } from "@/lib/supabase/serverClient";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import TabContextProvider from "@/components/providers/TabContextProvider";
+import { headers } from "next/headers";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   params: {
@@ -22,45 +24,15 @@ export default async function ListPage({ params: { listId } }: Props) {
     notFound();
   }
 
-  if (list?.categories.length === 0) {
-    return <NoItemsInList listId={list.id} />;
-  }
+  const currentHost = headers().get("host") ?? "unknown";
   return (
     <TabContextProvider>
-      <div className="flex-1 px-8 py-4">
-        <div className="flex gap-8">
-          <Link
-            href={`/lists/${list.id}/categories`}
-            className="font-bold underline"
-          >
-            Edit categories
-          </Link>
-          <Link
-            href={`/lists/${list.id}/items`}
-            className="font-bold underline"
-          >
-            Edit items
-          </Link>
-        </div>
-        <List initialList={list} />
+      <div className="flex flex-1 flex-col">
+        <List initialList={list} currentHost={currentHost} />
       </div>
-      <div className="sticky bottom-0 flex min-h-12 items-center justify-center border-t border-slate-200 bg-white">
+      <div className="sticky bottom-0 flex min-h-12 items-center justify-center bg-white">
         <BottomNav />
       </div>
     </TabContextProvider>
-  );
-}
-
-function NoItemsInList({ listId }: { listId: number }) {
-  return (
-    <div className="mt-4">
-      No items here.
-      <Link
-        href={`/lists/${listId}/categories`}
-        className="bg-slate-200 px-8 py-4"
-      >
-        Add categories
-      </Link>
-    </div>
   );
 }

@@ -4,6 +4,9 @@ import { useCreateCategory } from "@/hooks/useCreateCategory";
 import { CategoryWithoutItems } from "@/types/List";
 import { useQueryClient } from "@tanstack/react-query";
 import { FormEvent, useState } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Loader2 } from "lucide-react";
 
 type Props = { listId: number };
 
@@ -11,13 +14,12 @@ export default function CreateCategoryForm({ listId }: Props) {
   const queryClient = useQueryClient();
   const createCategoryMutation = useCreateCategory();
   const [error, setError] = useState("");
+  const [categoryName, setCategoryName] = useState("");
   const pending = createCategoryMutation.isPending;
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    const formData = new FormData(e.currentTarget);
-    const categoryName = String(formData.get("categoryName"));
     if (!categoryName) {
       return;
     }
@@ -31,6 +33,7 @@ export default function CreateCategoryForm({ listId }: Props) {
               return [...categories, newCategory];
             },
           );
+          setCategoryName("");
         },
         onError: (error) => {
           setError(error.message);
@@ -40,24 +43,40 @@ export default function CreateCategoryForm({ listId }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-8">
-      <div>
-        <label htmlFor="categoryName">Category name</label>
-        <input
-          type="text"
-          id="categoryName"
-          name="categoryName"
-          className="border border-slate-500"
-        />
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 rounded-md bg-blue-50 px-6 py-4 shadow-sm"
+    >
+      <h2 className="text-lg font-medium">Create new category</h2>
+      <fieldset disabled={pending} className="flex flex-col gap-4 py-4">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="categoryName" className="font-medium">
+            Name:
+          </label>
+          <Input
+            type="text"
+            id="categoryName"
+            name="categoryName"
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
+            className="flex-1"
+          />
+        </div>
         {error && <div className="font-bold text-red-600">{error}</div>}
-      </div>
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-fit border border-slate-800 px-8 py-4"
-      >
-        {pending ? "Creating category..." : "Create category"}
-      </button>
+        <Button
+          type="submit"
+          className="mt-4 flex items-center justify-center gap-2"
+        >
+          {pending ? (
+            <>
+              <Loader2 className="animate-spin" />
+              <span>Creating category...</span>
+            </>
+          ) : (
+            "Create category"
+          )}
+        </Button>
+      </fieldset>
     </form>
   );
 }

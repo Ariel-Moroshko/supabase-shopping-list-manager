@@ -4,6 +4,8 @@ import { useUndoPickedUpItem } from "@/hooks/useUndoPickedUpItem";
 import { Item, List } from "@/types/List";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
 
 type Props = {
   listId: number;
@@ -53,13 +55,21 @@ export default function UndoPickedUpItem({
   };
   return (
     <div>
-      <button
+      <Button
         onClick={() => handleUndo()}
-        className="bg-slate-300 px-2"
+        variant="outline"
         disabled={pending || !isActive}
+        className="flex min-w-32 items-center justify-center gap-2"
       >
-        {pending ? "Undoing..." : "Undo"}
-      </button>
+        {pending ? (
+          <>
+            <Loader2 className="animate-spin" size={18} />
+            <span>Undoing...</span>
+          </>
+        ) : (
+          "Undo"
+        )}
+      </Button>
       {error && <span className="font-bold text-red-600">Error: {error}</span>}
     </div>
   );

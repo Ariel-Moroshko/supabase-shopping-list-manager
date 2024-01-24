@@ -26,3 +26,11 @@ export const getUserIdFromSession = async () => {
   }
   return session.user.id;
 };
+
+export const getUserEmailFromSession = async () => {
+  const supabase = getSupabaseServerClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session?.user.email;
+};

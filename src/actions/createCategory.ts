@@ -18,6 +18,7 @@ export const createCategory = async (
   listId: number,
   categoryName: string,
 ): Promise<ReturnType> => {
+  categoryName = categoryName.trim();
   if (!categoryName) {
     return {
       success: false,
