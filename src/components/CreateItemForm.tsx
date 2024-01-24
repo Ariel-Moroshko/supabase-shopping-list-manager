@@ -91,7 +91,16 @@ export default function CreateItemForm({ list }: Props) {
                 <SelectTrigger>
                   <SelectValue placeholder="Choose category" />
                 </SelectTrigger>
-                <SelectContent id="categoryId">
+                <SelectContent
+                  id="categoryId"
+                  // https://github.com/radix-ui/primitives/issues/1658#issuecomment-1714105445
+                  ref={(ref) => {
+                    if (!ref) return;
+                    ref.ontouchstart = (e) => {
+                      e.preventDefault();
+                    };
+                  }}
+                >
                   {list.categories.map((category) => (
                     <SelectItem
                       key={category.id}
