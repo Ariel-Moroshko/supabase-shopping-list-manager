@@ -56,7 +56,11 @@
     "db_error": "A db error occured",
     "not_allowed_to_edit_list": "Not allowed to edit this list",
     "category_name_cant_be_empty": "Category name cant be empty",
-    "not_allowed": "You are not allowed to perform this action"
+    "not_allowed": "You are not allowed to perform this action",
+    "delete_category": "Delete Category",
+    "delete_category_description": "Deleting this category will also delete all of it's items. Are you sure you want to delete category",
+    "delete": "Delete",
+    "deleting": "Deleting"
   },
   "items_page": {
     "go_back_to_list": "Go back to list",
@@ -75,6 +79,9 @@
     "item_name_cant_be_empty": "Item name cant be empty",
     "not_allowed_to_edit_list": "Not allowed to edit this list",
     "item_already_exists": "This item name already exists in list",
-    "db_error": "A db error occured"
+    "db_error": "A db error occured",
+    "edit_item": "Edit Item",
+    "save": "save",
+    "saving": "saving"
   }
 }

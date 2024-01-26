@@ -180,7 +180,7 @@ export default function AllItemsList({
       {list.categories.length === 0 ? (
         <div className="mt-4 flex flex-col items-center justify-center gap-4">
           <div>{dictionary.list_is_empty}</div>
-          <Link href={`/lists/${list.id}/categories`}>
+          <Link href={`/${language}/lists/${list.id}/categories`}>
             <Button className="min-w-64">{dictionary.add_categories}</Button>
           </Link>
         </div>

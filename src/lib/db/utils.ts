@@ -389,3 +389,63 @@ export const changeListLanguage = async (
       AND "usersLists"."listId" = ${listId}
   `);
 };
+
+export const deleteCategoryFromList = async (
+  userId: string,
+  categoryId: number,
+) => {
+  await db.execute(sql`
+  DELETE FROM 
+    categories USING "usersLists"
+  WHERE 
+    "usersLists"."userId" = ${userId}
+    AND "usersLists"."listId" = categories."listId"
+    AND categories.id = ${categoryId}
+  `);
+};
+
+export const isUserAllowedToEditItem = async (
+  userId: string,
+  itemId: number,
+) => {
+  return (
+    await db.execute(sql`
+    SELECT 1 
+    FROM items 
+    INNER JOIN categories ON items."categoryId" = categories.id
+    INNER JOIN "usersLists" ON "usersLists"."listId" = categories."listId"
+    WHERE "usersLists"."userId" = ${userId}
+      AND items."categoryId" = categories.id
+      AND items.id = ${itemId}
+  `)
+  )[0];
+};
+
+export const isItemNameExistsInList = async (
+  itemId: number,
+  itemName: string,
+) => {
+  const { listId } = (
+    await db
+      .select({ listId: categories.listId })
+      .from(items)
+      .innerJoin(categories, eq(items.categoryId, categories.id))
+      .where(eq(items.id, itemId))
+  )[0];
+  const exists = await db
+    .select()
+    .from(items)
+    .innerJoin(categories, eq(items.categoryId, categories.id))
+    .where(and(eq(items.name, itemName), eq(categories.listId, listId)));
+  return exists.length > 0;
+};
+
+export const updateItemName = async (
+  itemId: number,
+  updatedItemName: string,
+) => {
+  await db
+    .update(items)
+    .set({ name: updatedItemName })
+    .where(eq(items.id, itemId));
+};

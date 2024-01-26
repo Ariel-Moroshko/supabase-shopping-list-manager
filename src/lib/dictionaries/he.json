@@ -56,7 +56,11 @@
     "db_error": "קרתה תקלה במערכת",
     "not_allowed_to_edit_list": "אתה לא רשאי לערוך רשימה זו",
     "category_name_cant_be_empty": "שם הקטגוריה לא יכול להיות ריק",
-    "not_allowed": "אתה לא רשאי לבצע פעולה זו"
+    "not_allowed": "אתה לא רשאי לבצע פעולה זו",
+    "delete_category": "מחיקת קטגוריה",
+    "delete_category_description": "מחיקת קטגוריה זו תמחק גם את כל הפריטים השייכים לה. האם אתה בטוח שברצונך למחוק את הקטגוריה",
+    "delete": "מחק",
+    "deleting": "מוחק"
   },
   "items_page": {
     "go_back_to_list": "חזור לרשימה",
@@ -75,6 +79,9 @@
     "item_name_cant_be_empty": "שם הפריט לא יכול להיות ריק",
     "not_allowed_to_edit_list": "אתה לא רשאי לערוך רשימה זו",
     "item_already_exists": "פריט זה כבר קיים ברשימה",
-    "db_error": "קרתה תקלה במערכת"
+    "db_error": "קרתה תקלה במערכת",
+    "edit_item": "עריכת פריט",
+    "save": "שמור",
+    "saving": "שומר"
   }
 }

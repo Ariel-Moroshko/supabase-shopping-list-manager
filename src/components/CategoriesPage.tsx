@@ -9,6 +9,7 @@ import { DraggableCategories } from "./DraggableCategories";
 import EditCategoryName from "./EditCategoryName";
 import { Dictionary, Language } from "@/lib/dictionaries";
 import { ArrowDownUp } from "lucide-react";
+import DeleteCategory from "./DeleteCategory";
 
 type Props = {
   listId: number;
@@ -61,12 +62,20 @@ export default function CategoriesPage({
                 <div className="flex flex-1 pe-4">
                   <span className="break-all">{category.name}</span>
                 </div>
-                <EditCategoryName
-                  listId={listId}
-                  category={category}
-                  lang={lang}
-                  dictionary={dictionary}
-                />
+                <div className="flex items-center gap-2">
+                  <EditCategoryName
+                    listId={listId}
+                    category={category}
+                    lang={lang}
+                    dictionary={dictionary}
+                  />
+                  <DeleteCategory
+                    listId={listId}
+                    category={category}
+                    lang={lang}
+                    dictionary={dictionary}
+                  />
+                </div>
               </li>
             ))}
           </ol>

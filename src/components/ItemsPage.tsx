@@ -12,6 +12,7 @@ import CreateItemForm from "./CreateItemForm";
 import DeleteItem from "./DeleteItem";
 import { Dictionary, Language } from "@/lib/dictionaries";
 import { twMerge } from "tailwind-merge";
+import EditItemName from "./EditItemName";
 
 type Props = {
   initialList: List;
@@ -48,12 +49,20 @@ export default function ItemsPage({ initialList, lang, dictionary }: Props) {
                         <div className="flex flex-1 pe-4">
                           <span className="break-all">{item.name}</span>
                         </div>
-                        <DeleteItem
-                          listId={list.id}
-                          item={item}
-                          lang={lang}
-                          dictionary={dictionary}
-                        />
+                        <div className="flex items-center justify-center gap-2">
+                          <EditItemName
+                            listId={list.id}
+                            item={item}
+                            lang={lang}
+                            dictionary={dictionary}
+                          />
+                          <DeleteItem
+                            listId={list.id}
+                            item={item}
+                            lang={lang}
+                            dictionary={dictionary}
+                          />
+                        </div>
                       </li>
                     ))}
                   </ol>

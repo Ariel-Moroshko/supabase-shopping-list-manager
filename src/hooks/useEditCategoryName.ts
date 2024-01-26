@@ -1,4 +1,3 @@
-import { deleteItem } from "@/actions/deleteItem";
 import { updateCategoryName } from "@/actions/updateCategoryName";
 import { Language } from "@/lib/dictionaries";
 import { useMutation } from "@tanstack/react-query";
