@@ -1,6 +1,7 @@
 "use server";
 
 import { addItemToShoppingList as dbAddItemToShoppingList } from "@/lib/db/utils";
+import { Language, getDictionary, isValidLanguage } from "@/lib/dictionaries";
 import { getUserIdFromSession } from "@/lib/supabase/serverActionClient";
 
 type ReturnType =
@@ -13,6 +14,7 @@ type ReturnType =
     };
 
 export const addItemToShoppingList = async (
+  lang: Language,
   itemId: number,
 ): Promise<ReturnType> => {
   if (!itemId) {
@@ -20,7 +22,14 @@ export const addItemToShoppingList = async (
       success: false,
       error: "Invalid item id",
     };
+  } else if (!isValidLanguage(lang)) {
+    return {
+      success: false,
+      error: "Invalid lang",
+    };
   }
+  const { list_page: dictionary } = await getDictionary(lang);
+
   try {
     const userId = await getUserIdFromSession();
     await dbAddItemToShoppingList(userId, itemId);
@@ -29,7 +38,7 @@ export const addItemToShoppingList = async (
     console.error(error);
     return {
       success: false,
-      error: "A db error occured",
+      error: dictionary.db_error,
     };
   }
 };

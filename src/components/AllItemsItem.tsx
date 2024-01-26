@@ -7,12 +7,24 @@ import { Check, Loader2, Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import ItemNote from "./ItemNote";
+import { Dictionary, Language } from "@/lib/dictionaries";
+import { twMerge } from "tailwind-merge";
 
-type Props = { listId: number; item: Item };
+type Props = {
+  listId: number;
+  item: Item;
+  language: Language;
+  dictionary: Dictionary["list_page"];
+};
 
-export default function AllItemsItem({ listId, item }: Props) {
+export default function AllItemsItem({
+  listId,
+  item,
+  language,
+  dictionary,
+}: Props) {
   const queryClient = useQueryClient();
-  const addItemToShoppingListMutation = useAddItemToShoppingList();
+  const addItemToShoppingListMutation = useAddItemToShoppingList(language);
   const [error, setError] = useState("");
   const pending = addItemToShoppingListMutation.isPending;
 
@@ -42,13 +54,23 @@ export default function AllItemsItem({ listId, item }: Props) {
 
   return (
     <li className="flex items-center">
-      <div className="flex flex-1 gap-4">
+      <div className="flex flex-1 gap-4 pe-4">
         <span
-          className={item.isPickedUp ? "line-through decoration-red-600" : ""}
+          className={twMerge(
+            "break-all",
+            item.isPickedUp && "line-through decoration-red-600",
+          )}
         >
           {item.name}
         </span>
-        <span className="italic">{item.note}</span>
+        <span
+          className={twMerge(
+            "break-all italic",
+            item.isPickedUp && "line-through decoration-red-600",
+          )}
+        >
+          {item.note}
+        </span>
       </div>
       <div className="flex items-center justify-center gap-3">
         {item.isInShoppingList ? (
@@ -69,11 +91,18 @@ export default function AllItemsItem({ listId, item }: Props) {
               )}
             </Button>
             {error && (
-              <span className="font-bold text-red-600">Error: {error}</span>
+              <span className="font-bold text-red-600">
+                {dictionary.error}: {error}
+              </span>
             )}
           </>
         )}
-        <ItemNote listId={listId} item={item} />
+        <ItemNote
+          listId={listId}
+          item={item}
+          language={language}
+          dictionary={dictionary}
+        />
       </div>
     </li>
   );

@@ -1,14 +1,31 @@
 "use client";
 
 import { useTopNavTitleContext } from "@/hooks/useTopNavTitleContext";
+import { Dictionary, Language } from "@/lib/dictionaries";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
-export default function TopNavTitle() {
+type Props = { language: Language; dictionary: Dictionary["top_nav"] };
+
+export default function TopNavTitle({ language, dictionary }: Props) {
   const { title, setTitle } = useTopNavTitleContext();
   const pathname = usePathname();
   useEffect(() => {
-    setTitle(pathname);
-  }, [pathname, setTitle]);
+    const listPageRegex = /^\/(en|he|ru)\/lists\/\d+$/;
+    const itemsPageRegex = /^\/(en|he|ru)\/lists\/\d+\/items$/;
+    const categoriesPageRegex = /^\/(en|he|ru)\/lists\/\d+\/categories$/;
+    const loginPageRegex = /^\/login$/;
+    if (listPageRegex.test(pathname)) {
+      setTitle(dictionary.all_items);
+    } else if (itemsPageRegex.test(pathname)) {
+      setTitle(dictionary.items);
+    } else if (categoriesPageRegex.test(pathname)) {
+      setTitle(dictionary.categories);
+    } else if (loginPageRegex.test(pathname)) {
+      setTitle("Login");
+    } else {
+      setTitle("");
+    }
+  }, [pathname, setTitle, dictionary]);
   return title;
 }

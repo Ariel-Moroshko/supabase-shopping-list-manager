@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1706100250890,
-      "tag": "0000_gigantic_mimic",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1706100299881,
-      "tag": "0001_chunky_hemingway",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1706105897595,
-      "tag": "0002_bitter_doctor_octopus",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1706105941640,
-      "tag": "0003_lush_vision",
+      "when": 1706182964717,
+      "tag": "0000_light_emma_frost",
       "breakpoints": true
     }
   ]

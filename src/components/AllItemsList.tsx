@@ -6,7 +6,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -21,16 +25,33 @@ import { Button } from "./ui/button";
 import { Settings, X } from "lucide-react";
 import { Input } from "./ui/input";
 import { useEffect, useState } from "react";
+import { Dictionary, Language } from "@/lib/dictionaries";
+import { changeLanguage } from "@/actions/changeLanguage";
 
-type Props = { list: List; currentHost: string };
+type Props = {
+  list: List;
+  currentHost: string;
+  dictionary: Dictionary["list_page"];
+  language: Language;
+};
 
-export default function AllItemsList({ list, currentHost }: Props) {
+export default function AllItemsList({
+  list,
+  currentHost,
+  dictionary,
+  language,
+}: Props) {
   const [searchText, setSearchText] = useState("");
   const [protocol, setProtocol] = useState("");
 
   useEffect(() => {
     setProtocol(location.protocol);
   }, []);
+
+  const handleChangeLanguage = async (updatedLang: Language) => {
+    await changeLanguage(list.id, updatedLang);
+    window.location.href = `/${updatedLang}/lists/${list.id}`;
+  };
 
   return (
     <div className="flex flex-col gap-1">
@@ -42,49 +63,73 @@ export default function AllItemsList({ list, currentHost }: Props) {
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             className="bg-slate-100 pe-8"
-            placeholder="Search item..."
+            placeholder={dictionary.search_item}
           />
           <Button
             variant="ghost"
-            className="absolute right-0 top-1/2 -translate-y-1/2 px-2 py-2 hover:bg-inherit"
+            className="absolute top-1/2 -translate-y-1/2 px-2 py-2 hover:bg-inherit ltr:right-0 rtl:left-0"
           >
             <X onClick={() => setSearchText("")} strokeWidth={1} size={16} />
           </Button>
         </div>
 
         <Dialog>
-          <DropdownMenu>
+          <DropdownMenu dir={language === "he" ? "rtl" : "ltr"}>
             <DropdownMenuTrigger className="" asChild>
               <Button
                 variant="outline"
                 className="flex items-center justify-center gap-2"
               >
                 <Settings size={18} />
-                <span>More</span>
+                <span>{dictionary.more}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem asChild>
-                <Link href={`/lists/${list.id}/categories`}>
-                  Edit categories
+                <Link href={`/${language}/lists/${list.id}/categories`}>
+                  {dictionary.edit_categories}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`/lists/${list.id}/items`}>Edit items</Link>
+                <Link href={`/${language}/lists/${list.id}/items`}>
+                  {dictionary.edit_items}
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DialogTrigger asChild>
-                <DropdownMenuItem>Share list</DropdownMenuItem>
+                <DropdownMenuItem>{dictionary.share_list}</DropdownMenuItem>
               </DialogTrigger>
+              <DropdownMenuSeparator />
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger dir={language === "he" ? "rtl" : "ltr"}>
+                  <span>{dictionary.change_language}</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuItem
+                      onClick={() => handleChangeLanguage("en")}
+                    >
+                      <span>{dictionary.english}</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleChangeLanguage("he")}
+                    >
+                      <span>{dictionary.hebrew}</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
             </DropdownMenuContent>
           </DropdownMenu>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Share List</DialogTitle>
-              <div>
-                To share this list with someone, send them the following link:
+              <DialogTitle className="text-center">
+                {dictionary.share_list}
+              </DialogTitle>
+              <div className="text-center">
+                {dictionary.share_list_description}
               </div>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 text-center">
                 <div className="mt-2 border-2 border-dashed bg-blue-50 px-4 py-2">
                   {`${protocol}//${currentHost}/lists/${list.id}/join?invitationKey=${list.invitationKey}`}
                 </div>
@@ -93,7 +138,9 @@ export default function AllItemsList({ list, currentHost }: Props) {
                     <span className="w-full border-t"></span>
                   </div>
                   <div className="relative">
-                    <span className="bg-white px-2">Or</span>
+                    <span className="bg-white px-2">
+                      {dictionary.share_list_or}
+                    </span>
                   </div>
                 </div>
                 <div className="flex justify-center">
@@ -121,7 +168,7 @@ export default function AllItemsList({ list, currentHost }: Props) {
                         </g>
                       </g>
                     </svg>
-                    <span>Share with WhatsApp</span>
+                    <span>{dictionary.share_with_whatsapp}</span>
                   </Button>
                 </div>
               </div>
@@ -129,19 +176,31 @@ export default function AllItemsList({ list, currentHost }: Props) {
           </DialogContent>
         </Dialog>
       </div>
-      <Accordion
-        type="multiple"
-        defaultValue={list.categories.map((c) => c.id.toString())}
-        className="px-4"
-      >
-        {list.categories.map((category) => (
-          <AllItemsCategory
-            key={category.id}
-            listId={list.id}
-            category={category}
-          />
-        ))}
-      </Accordion>
+
+      {list.categories.length === 0 ? (
+        <div className="mt-4 flex flex-col items-center justify-center gap-4">
+          <div>{dictionary.list_is_empty}</div>
+          <Link href={`/lists/${list.id}/categories`}>
+            <Button className="min-w-64">{dictionary.add_categories}</Button>
+          </Link>
+        </div>
+      ) : (
+        <Accordion
+          type="multiple"
+          defaultValue={list.categories.map((c) => c.id.toString())}
+          className="px-4"
+        >
+          {list.categories.map((category) => (
+            <AllItemsCategory
+              key={category.id}
+              listId={list.id}
+              category={category}
+              language={language}
+              dictionary={dictionary}
+            />
+          ))}
+        </Accordion>
+      )}
     </div>
   );
 }

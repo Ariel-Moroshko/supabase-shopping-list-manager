@@ -13,13 +13,19 @@ import { Item, List } from "@/types/List";
 import { FormEvent, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteItem } from "@/hooks/useDeleteItem";
+import { Dictionary, Language } from "@/lib/dictionaries";
 
-type Props = { listId: number; item: Item };
+type Props = {
+  listId: number;
+  item: Item;
+  lang: Language;
+  dictionary: Dictionary["items_page"];
+};
 
-export default function DeleteItem({ listId, item }: Props) {
+export default function DeleteItem({ listId, item, lang, dictionary }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-  const deleteItemMutation = useDeleteItem();
+  const deleteItemMutation = useDeleteItem(lang);
   const [error, setError] = useState("");
   const pending = deleteItemMutation.isPending;
 
@@ -57,16 +63,20 @@ export default function DeleteItem({ listId, item }: Props) {
       </DialogTrigger>
       <DialogContent className="top-0 translate-y-0">
         <DialogHeader>
-          <DialogTitle>Delete Item</DialogTitle>
+          <DialogTitle className="text-center">
+            {dictionary.delete_item}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <fieldset className="flex flex-col gap-4" disabled={pending}>
-            <div>
-              Are you sure you want to delete
+            <div className="break-all">
+              {dictionary.delete_item_description}
               <span className="font-bold"> {item.name}</span>?
             </div>
             {error && (
-              <span className="font-bold text-red-600">Error: {error}</span>
+              <span className="font-bold text-red-600">
+                {dictionary.error}: {error}
+              </span>
             )}
             <div className="flex justify-between">
               <Button
@@ -77,10 +87,10 @@ export default function DeleteItem({ listId, item }: Props) {
                 {pending ? (
                   <>
                     <Loader2 className="animate-spin" />
-                    <span>Deleting...</span>
+                    <span>{dictionary.deleting}...</span>
                   </>
                 ) : (
-                  "Delete"
+                  dictionary.delete
                 )}
               </Button>
               <Button
@@ -88,7 +98,7 @@ export default function DeleteItem({ listId, item }: Props) {
                 variant="link"
                 onClick={() => setIsOpen(false)}
               >
-                Cancel
+                {dictionary.cancel}
               </Button>
             </div>
           </fieldset>

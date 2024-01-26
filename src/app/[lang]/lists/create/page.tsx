@@ -7,7 +7,13 @@ import { useFormState, useFormStatus } from "react-dom";
 
 const initialFormState: CreateListFormState = {};
 
-export default function CreateList() {
+type Props = {
+  params: {
+    lang: string;
+  };
+};
+
+export default function CreateList({ params: { lang } }: Props) {
   const [formState, formAction] = useFormState(createList, initialFormState);
 
   return (

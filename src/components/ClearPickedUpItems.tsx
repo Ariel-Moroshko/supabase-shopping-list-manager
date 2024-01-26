@@ -6,20 +6,26 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
+import { Dictionary, Language } from "@/lib/dictionaries";
 
 type Props = {
   listId: number;
   setIsClearing: (b: boolean) => void;
   isActive: boolean;
+  language: Language;
+
+  dictionary: Dictionary["list_page"];
 };
 
 export default function ClearPickedUpItems({
   listId,
   setIsClearing,
   isActive,
+  language,
+  dictionary,
 }: Props) {
   const queryClient = useQueryClient();
-  const clearPickedUpItemsMutation = useClearPickedUpItems();
+  const clearPickedUpItemsMutation = useClearPickedUpItems(language);
   const [error, setError] = useState("");
   const pending = clearPickedUpItemsMutation.isPending;
 
@@ -64,13 +70,17 @@ export default function ClearPickedUpItems({
         {pending ? (
           <>
             <Loader2 className="animate-spin" size={18} />
-            <span>Clearing...</span>
+            <span>{dictionary.clearing_items}...</span>
           </>
         ) : (
-          "Clear items"
+          dictionary.clear_items
         )}
       </Button>
-      {error && <span className="font-bold text-red-600">Error: {error}</span>}
+      {error && (
+        <span className="font-bold text-red-600">
+          {dictionary.error}: {error}
+        </span>
+      )}
     </div>
   );
 }

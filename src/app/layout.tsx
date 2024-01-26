@@ -4,6 +4,8 @@ import "./globals.css";
 import TopNav from "@/components/TopNav";
 import TopNavTitleContextProvider from "@/components/providers/TopNavTitleContextProvider";
 import { ReactQueryProvider } from "@/components/providers/ReactQueryProvider";
+import { headers } from "next/headers";
+import { isValidLanguage } from "@/lib/dictionaries";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,12 +21,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const langFromHeader = headers().get("x-pathname")?.split("/")?.[1] ?? "";
+  const language = isValidLanguage(langFromHeader) ? langFromHeader : "en";
   return (
-    <html lang="en">
+    <html lang={language} dir={language === "he" ? "rtl" : "ltr"}>
       <body className={`${inter.className} bg-slate-50`}>
         <div className="mx-auto flex min-h-dvh max-w-lg flex-col bg-white shadow-lg">
           <TopNavTitleContextProvider>
-            <TopNav />
+            <TopNav language={language} />
             <ReactQueryProvider>{children}</ReactQueryProvider>
           </TopNavTitleContextProvider>
         </div>

@@ -1,5 +1,5 @@
 {
-  "id": "44c36965-b8d3-4528-ad84-5a4037985a26",
+  "id": "ff586b61-e598-4ecf-8d78-9f07c13dabe0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -110,6 +110,13 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
         }
       },
       "indexes": {
@@ -177,6 +184,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "language": {
+          "name": "language",
+          "type": "language",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'en'"
         }
       },
       "indexes": {},
@@ -305,7 +319,16 @@
       "uniqueConstraints": {}
     }
   },
-  "enums": {},
+  "enums": {
+    "language": {
+      "name": "language",
+      "values": {
+        "en": "en",
+        "he": "he",
+        "ru": "ru"
+      }
+    }
+  },
   "schemas": {},
   "_meta": {
     "columns": {},

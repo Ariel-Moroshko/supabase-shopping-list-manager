@@ -13,14 +13,25 @@ import { CategoryWithoutItems } from "@/types/List";
 import { FormEvent, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEditCategoryName } from "@/hooks/useEditCategoryName";
+import { Dictionary, Language } from "@/lib/dictionaries";
 
-type Props = { listId: number; category: CategoryWithoutItems };
+type Props = {
+  listId: number;
+  category: CategoryWithoutItems;
+  lang: Language;
+  dictionary: Dictionary["categories_page"];
+};
 
-export default function EditCategoryName({ listId, category }: Props) {
+export default function EditCategoryName({
+  listId,
+  category,
+  lang,
+  dictionary,
+}: Props) {
   const [categoryName, setCategoryName] = useState(category.name);
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-  const editCategoryNameMutation = useEditCategoryName();
+  const editCategoryNameMutation = useEditCategoryName(lang);
   const [error, setError] = useState("");
   const pending = editCategoryNameMutation.isPending;
 
@@ -68,34 +79,38 @@ export default function EditCategoryName({ listId, category }: Props) {
       </DialogTrigger>
       <DialogContent className="top-0 translate-y-0">
         <DialogHeader>
-          <DialogTitle>Edit Category</DialogTitle>
+          <DialogTitle className="text-center">
+            {dictionary.edit_cateogry}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <fieldset className="flex flex-col gap-4" disabled={pending}>
             <div className="flex flex-col gap-2">
-              <label htmlFor="note" className="font-medium">
-                Category name:
+              <label htmlFor="newCategoryName" className="font-medium">
+                {dictionary.category_name}:
               </label>
               <Input
                 type="text"
-                id="categoryName"
-                name="categoryName"
+                id="newCategoryName"
+                name="newCategoryName"
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
               />
             </div>
             {error && (
-              <span className="font-bold text-red-600">Error: {error}</span>
+              <span className="font-bold text-red-600">
+                {dictionary.error}: {error}
+              </span>
             )}
             <div className="flex justify-between">
               <Button type="submit" className="flex min-w-32 gap-2">
                 {pending ? (
                   <>
                     <Loader2 className="animate-spin" />
-                    <span>Saving...</span>
+                    <span>{dictionary.saving}...</span>
                   </>
                 ) : (
-                  "Save"
+                  dictionary.save
                 )}
               </Button>
               <Button
@@ -103,7 +118,7 @@ export default function EditCategoryName({ listId, category }: Props) {
                 variant="link"
                 onClick={() => setIsOpen(false)}
               >
-                Cancel
+                {dictionary.cancel}
               </Button>
             </div>
           </fieldset>

@@ -2,15 +2,22 @@
 
 import { useTabContext } from "@/hooks/useTabContext";
 import { useTopNavTitleContext } from "@/hooks/useTopNavTitleContext";
+import { Dictionary, Language } from "@/lib/dictionaries";
 import { List, ShoppingCart } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
-export function BottomNav() {
+type Props = { lang: Language; dictionary: Dictionary["list_page"] };
+
+export function BottomNav({ dictionary, lang }: Props) {
   const { setTitle } = useTopNavTitleContext();
   const { tab, setTab } = useTabContext();
 
   const handleTabClick = (tab: "allItems" | "shop") => {
-    setTitle(tab === "allItems" ? "All Items" : "Start Shopping");
+    setTitle(
+      tab === "allItems"
+        ? dictionary.top_header_all_items
+        : dictionary.top_header_start_shopping,
+    );
     setTab(tab);
   };
 
@@ -27,12 +34,16 @@ export function BottomNav() {
               "rounded-full bg-slate-950 px-6 text-slate-100",
           )}
         >
-          <List size={20} strokeWidth={2} />
+          <List
+            size={20}
+            strokeWidth={2}
+            className={lang === "he" ? "-scale-x-100" : ""}
+          />
         </span>
         <span
           className={twMerge(tab === "allItems" && "font-bold text-slate-950")}
         >
-          All items
+          {dictionary.all_items}
         </span>
       </button>
       <button
@@ -45,10 +56,14 @@ export function BottomNav() {
             tab === "shop" && "rounded-full bg-slate-950 px-6  text-slate-100",
           )}
         >
-          <ShoppingCart size={20} strokeWidth={2} />
+          <ShoppingCart
+            size={20}
+            strokeWidth={2}
+            className={lang === "he" ? "-scale-x-100" : ""}
+          />
         </span>
         <span className={twMerge(tab === "shop" && "font-bold text-slate-950")}>
-          Shop
+          {dictionary.shop}
         </span>
       </button>
     </div>

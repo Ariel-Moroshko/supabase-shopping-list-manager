@@ -35,5 +35,5 @@ export const createList = async (
       error: "A db error occured",
     };
   }
-  redirect(`/lists/${newListId}`);
+  redirect(`/en/lists/${newListId}`);
 };

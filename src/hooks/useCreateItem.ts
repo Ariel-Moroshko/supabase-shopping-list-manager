@@ -1,9 +1,10 @@
 "use client";
 
 import { createItem } from "@/actions/createItem";
+import { Language } from "@/lib/dictionaries";
 import { useMutation } from "@tanstack/react-query";
 
-export const useCreateItem = () => {
+export const useCreateItem = (lang: Language) => {
   type MutationType = {
     listId: number;
     categoryId: number;
@@ -11,7 +12,7 @@ export const useCreateItem = () => {
   };
   return useMutation({
     mutationFn: async ({ listId, categoryId, itemName }: MutationType) => {
-      const result = await createItem(listId, categoryId, itemName);
+      const result = await createItem(lang, listId, categoryId, itemName);
       if (!result.success) {
         throw new Error(result.error);
       }

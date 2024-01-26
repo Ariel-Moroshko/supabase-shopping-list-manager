@@ -14,25 +14,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Dictionary, Language } from "@/lib/dictionaries";
 
-type Props = { list: List };
+type Props = {
+  list: List;
+  lang: Language;
+  dictionary: Dictionary["items_page"];
+};
 
-export default function CreateItemForm({ list }: Props) {
+export default function CreateItemForm({ list, lang, dictionary }: Props) {
   const queryClient = useQueryClient();
-  const createItemMutation = useCreateItem();
+  const createItemMutation = useCreateItem(lang);
   const [error, setError] = useState("");
   const [itemName, setItemName] = useState("");
   const [categoryId, setCategoryId] = useState<number | null>(null);
+  const [categoryError, setCategoryError] = useState(false);
   const pending = createItemMutation.isPending;
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    if (!itemName || !categoryId) {
+    setCategoryError(false);
+    if (!itemName.trim()) {
+      return;
+    } else if (!categoryId) {
+      setCategoryError(true);
       return;
     }
     createItemMutation.mutate(
-      { listId: list.id, categoryId, itemName },
+      { listId: list.id, categoryId, itemName: itemName.trim() },
       {
         onSuccess: (newItem: Item) => {
           queryClient.setQueryData([list.id, "items"], (currentList: List) => {
@@ -64,12 +74,12 @@ export default function CreateItemForm({ list }: Props) {
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 rounded-md bg-blue-50 px-6 py-6 shadow-sm"
     >
-      <h2 className="text-lg font-medium">Create new item</h2>
+      <h2 className="text-lg font-medium">{dictionary.create_new_item}</h2>
       <fieldset disabled={pending} className="flex flex-col gap-6 py-4">
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-1">
             <label htmlFor="itemName" className="font-medium">
-              Item name:
+              {dictionary.item_name}:
             </label>
             <Input
               type="text"
@@ -78,18 +88,23 @@ export default function CreateItemForm({ list }: Props) {
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
               className="flex-1"
+              required
             />
           </div>
           <div>
             <label className="flex flex-col gap-1">
-              <span className="font-medium">Category:</span>
+              <span className="font-medium">{dictionary.category}:</span>
               <Select
+                dir={lang === "he" ? "rtl" : "ltr"}
                 name="categoryId"
                 value={categoryId ? String(categoryId) : ""}
                 onValueChange={(newValue) => setCategoryId(Number(newValue))}
+                required
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose category" />
+                <SelectTrigger
+                  className={categoryError ? "border-red-600" : ""}
+                >
+                  <SelectValue placeholder={dictionary.choose_category} />
                 </SelectTrigger>
                 <SelectContent
                   id="categoryId"
@@ -114,7 +129,11 @@ export default function CreateItemForm({ list }: Props) {
             </label>
           </div>
         </div>
-        {error && <div className="font-bold text-red-600">{error}</div>}
+        {error && (
+          <div className="font-bold text-red-600">
+            {dictionary.error}: {error}
+          </div>
+        )}
         <Button
           type="submit"
           className="flex items-center justify-center gap-2"
@@ -122,10 +141,10 @@ export default function CreateItemForm({ list }: Props) {
           {pending ? (
             <>
               <Loader2 className="animate-spin" />
-              <span>Creating item...</span>
+              <span>{dictionary.creating_item}...</span>
             </>
           ) : (
-            "Create item"
+            dictionary.create_item
           )}
         </Button>
       </fieldset>

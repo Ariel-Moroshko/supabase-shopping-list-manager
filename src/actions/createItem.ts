@@ -1,6 +1,7 @@
 "use server";
 
 import { createItemInCategory, getAllItemsInList } from "@/lib/db/utils";
+import { Language, getDictionary, isValidLanguage } from "@/lib/dictionaries";
 import { getUserIdFromSession } from "@/lib/supabase/serverActionClient";
 import { Item } from "@/types/List";
 
@@ -14,14 +15,23 @@ type ReturnType =
       error: string;
     };
 export const createItem = async (
+  lang: Language,
   listId: number,
   categoryId: number,
   itemName: string,
 ): Promise<ReturnType> => {
+  itemName = itemName.trim();
+  if (!isValidLanguage(lang)) {
+    return {
+      success: false,
+      error: "Invalid lang",
+    };
+  }
+  const { items_page: dictionary } = await getDictionary(lang);
   if (!itemName) {
     return {
       success: false,
-      error: "Item name cant be empty",
+      error: dictionary.item_name_cant_be_empty,
     };
   } else if (!categoryId) {
     return {
@@ -41,7 +51,7 @@ export const createItem = async (
     if (!list) {
       return {
         success: false,
-        error: "Not allowed to edit this list",
+        error: dictionary.not_allowed_to_edit_list,
       };
     }
     if (!list.categories.some((category) => category.id === categoryId)) {
@@ -56,7 +66,7 @@ export const createItem = async (
     if (itemNameAlreadyExists) {
       return {
         success: false,
-        error: "This item already exists",
+        error: dictionary.item_already_exists,
       };
     }
 
@@ -66,7 +76,7 @@ export const createItem = async (
     console.error(error);
     return {
       success: false,
-      error: "A db error occured",
+      error: dictionary.db_error,
     };
   }
 };

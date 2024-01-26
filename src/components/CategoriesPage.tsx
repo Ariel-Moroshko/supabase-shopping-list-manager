@@ -7,12 +7,21 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { DraggableCategories } from "./DraggableCategories";
 import EditCategoryName from "./EditCategoryName";
+import { Dictionary, Language } from "@/lib/dictionaries";
+import { ArrowDownUp } from "lucide-react";
 
 type Props = {
   listId: number;
   initialCategories: CategoryWithoutItems[];
+  lang: Language;
+  dictionary: Dictionary["categories_page"];
 };
-export default function CategoriesPage({ listId, initialCategories }: Props) {
+export default function CategoriesPage({
+  listId,
+  initialCategories,
+  lang,
+  dictionary,
+}: Props) {
   const [isChangingOrder, setIsChangingOrder] = useState(false);
   const { data: categories } = useCategories(listId, initialCategories);
 
@@ -24,6 +33,8 @@ export default function CategoriesPage({ listId, initialCategories }: Props) {
             listId={listId}
             categories={categories}
             setIsChangingOrder={setIsChangingOrder}
+            lang={lang}
+            dictionary={dictionary}
           />
         </>
       )}
@@ -31,19 +42,31 @@ export default function CategoriesPage({ listId, initialCategories }: Props) {
         <div className="flex flex-col">
           <Button
             variant="secondary"
-            className="mb-8 font-bold"
+            className="mb-8 flex items-center justify-center gap-2 shadow"
             onClick={() => setIsChangingOrder(true)}
           >
-            Change order
+            <ArrowDownUp size={16} />
+            <span>{dictionary.change_order}</span>
           </Button>
 
-          <CreateCategoryForm listId={listId} />
+          <CreateCategoryForm
+            listId={listId}
+            lang={lang}
+            dictionary={dictionary}
+          />
 
           <ol className="mt-8 flex flex-col gap-2 divide-y">
             {categories.map((category) => (
               <li key={category.id} className="flex items-center px-4 py-1">
-                <div className="flex-1">{category.name}</div>
-                <EditCategoryName listId={listId} category={category} />
+                <div className="flex flex-1 pe-4">
+                  <span className="break-all">{category.name}</span>
+                </div>
+                <EditCategoryName
+                  listId={listId}
+                  category={category}
+                  lang={lang}
+                  dictionary={dictionary}
+                />
               </li>
             ))}
           </ol>

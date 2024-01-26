@@ -9,6 +9,7 @@ import {
   unique,
   boolean,
   index,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -54,11 +55,14 @@ export const usersListsRelations = relations(usersLists, ({ one }) => ({
   }),
 }));
 
+export const languagesEnum = pgEnum("language", ["en", "he", "ru"]);
+
 export const lists = pgTable("lists", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   invitationKey: uuid("invitationKey").unique().notNull().defaultRandom(),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
+  language: languagesEnum("language").notNull().default("en"),
 });
 
 export const listsRelations = relations(lists, ({ many }) => ({

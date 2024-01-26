@@ -13,14 +13,25 @@ import { Item, List } from "@/types/List";
 import { FormEvent, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEditNote } from "@/hooks/useEditNote";
+import { Dictionary, Language } from "@/lib/dictionaries";
 
-type Props = { listId: number; item: Item };
+type Props = {
+  listId: number;
+  item: Item;
+  language: Language;
+  dictionary: Dictionary["list_page"];
+};
 
-export default function ItemNote({ listId, item }: Props) {
+export default function ItemNote({
+  listId,
+  item,
+  language,
+  dictionary,
+}: Props) {
   const [note, setNote] = useState(item.note);
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-  const editNoteMutation = useEditNote();
+  const editNoteMutation = useEditNote(language);
   const [error, setError] = useState("");
   const pending = editNoteMutation.isPending;
 
@@ -67,13 +78,15 @@ export default function ItemNote({ listId, item }: Props) {
       </DialogTrigger>
       <DialogContent className="top-0 translate-y-0">
         <DialogHeader>
-          <DialogTitle>Edit Note</DialogTitle>
+          <DialogTitle className="text-center">
+            {dictionary.edit_note}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <fieldset className="flex flex-col gap-4" disabled={pending}>
             <div className="flex flex-col gap-2">
               <label htmlFor="note" className="font-medium">
-                Note for {item.name}:
+                {dictionary.note_for} {item.name}:
               </label>
               <Input
                 type="text"
@@ -84,17 +97,19 @@ export default function ItemNote({ listId, item }: Props) {
               />
             </div>
             {error && (
-              <span className="font-bold text-red-600">Error: {error}</span>
+              <span className="font-bold text-red-600">
+                {dictionary.error}: {error}
+              </span>
             )}
             <div className="flex justify-between">
               <Button type="submit" className="flex min-w-32 gap-2">
                 {pending ? (
                   <>
                     <Loader2 className="animate-spin" />
-                    <span>Saving...</span>
+                    <span>{dictionary.saving}...</span>
                   </>
                 ) : (
-                  "Save"
+                  dictionary.save
                 )}
               </Button>
               <Button
@@ -102,7 +117,7 @@ export default function ItemNote({ listId, item }: Props) {
                 variant="link"
                 onClick={() => setIsOpen(false)}
               >
-                Cancel
+                {dictionary.cancel}
               </Button>
             </div>
           </fieldset>

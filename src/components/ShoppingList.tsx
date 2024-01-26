@@ -3,10 +3,15 @@ import ShoppingListCategory from "./ShoppingListCategory";
 import PickedUpItems from "./PickedUpItems";
 import { Accordion } from "@radix-ui/react-accordion";
 import { useEffect, useMemo, useState } from "react";
+import { Dictionary, Language } from "@/lib/dictionaries";
 
-type Props = { list: List };
+type Props = {
+  list: List;
+  language: Language;
+  dictionary: Dictionary["list_page"];
+};
 
-export default function ShoppingList({ list }: Props) {
+export default function ShoppingList({ list, language, dictionary }: Props) {
   const unCheckedList: List = useMemo(() => {
     return {
       ...list,
@@ -46,7 +51,7 @@ export default function ShoppingList({ list }: Props) {
     <div className="flex flex-1 flex-col">
       {unCheckedList.categories.length === 0 && checkedItems.length === 0 && (
         <div className="mt-6 flex justify-center">
-          No items in shopping list
+          {dictionary.no_items_in_shopping_list}
         </div>
       )}
       {unCheckedList.categories.length > 0 && (
@@ -56,6 +61,7 @@ export default function ShoppingList({ list }: Props) {
               key={category.id}
               listId={list.id}
               category={category}
+              language={language}
             />
           ))}
         </Accordion>
@@ -66,6 +72,8 @@ export default function ShoppingList({ list }: Props) {
           items={checkedItems}
           isCheckedItemsOpen={isCheckedItemsOpen}
           setIsCheckedItemsOpen={setIsCheckedItemsOpen}
+          language={language}
+          dictionary={dictionary}
         />
       )}
     </div>

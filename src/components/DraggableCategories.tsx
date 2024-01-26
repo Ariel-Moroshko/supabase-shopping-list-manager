@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { useReorderCategories } from "@/hooks/useReorderCategories";
+import { Dictionary, Language } from "@/lib/dictionaries";
 
 type Source = {
   droppableId: string;
@@ -17,12 +18,16 @@ type Props = {
   listId: number;
   categories: CategoryWithoutItems[];
   setIsChangingOrder: (b: boolean) => void;
+  lang: Language;
+  dictionary: Dictionary["categories_page"];
 };
 
 export const DraggableCategories = ({
   listId,
   categories,
   setIsChangingOrder,
+  lang,
+  dictionary,
 }: Props) => {
   const [orderedCategories, setOrderedCategories] = useState(categories);
   const handleDragEnd = (results: any) => {
@@ -38,7 +43,7 @@ export const DraggableCategories = ({
   };
 
   const queryClient = useQueryClient();
-  const reorderCategoriesMutation = useReorderCategories();
+  const reorderCategoriesMutation = useReorderCategories(lang);
   const [error, setError] = useState("");
   const pending = reorderCategoriesMutation.isPending;
 
@@ -72,14 +77,14 @@ export const DraggableCategories = ({
           {pending ? (
             <>
               <Loader2 className="animate-spin" />
-              <span>Saving...</span>
+              <span>{dictionary.saving}...</span>
             </>
           ) : (
-            "Save order"
+            dictionary.save_order
           )}
         </Button>
         <Button variant="link" onClick={() => setIsChangingOrder(false)}>
-          Cancel
+          {dictionary.cancel}
         </Button>
       </div>
       {error && <div className="font-bold text-red-600">{error}</div>}
@@ -105,7 +110,9 @@ export const DraggableCategories = ({
                       className="flex items-center gap-2 py-3"
                     >
                       <GripVertical />
-                      {category.name}
+                      <div className="flex flex-1 pe-4">
+                        <span className="break-all">{category.name}</span>
+                      </div>
                     </li>
                   )}
                 </Draggable>

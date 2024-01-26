@@ -1,6 +1,7 @@
 "use server";
 
 import { createCategoryInList, getAllCategoriesInList } from "@/lib/db/utils";
+import { Language, getDictionary, isValidLanguage } from "@/lib/dictionaries";
 import { getUserIdFromSession } from "@/lib/supabase/serverActionClient";
 import { CategoryWithoutItems } from "@/types/List";
 
@@ -15,14 +16,22 @@ type ReturnType =
     };
 
 export const createCategory = async (
+  lang: Language,
   listId: number,
   categoryName: string,
 ): Promise<ReturnType> => {
   categoryName = categoryName.trim();
+  if (!isValidLanguage(lang)) {
+    return {
+      success: false,
+      error: "Invalid lang",
+    };
+  }
+  const { categories_page: dictionary } = await getDictionary(lang);
   if (!categoryName) {
     return {
       success: false,
-      error: "Category name cant be empty",
+      error: dictionary.category_name_cant_be_empty,
     };
   } else if (!listId) {
     return {
@@ -37,7 +46,7 @@ export const createCategory = async (
     if (!listWithCategories) {
       return {
         success: false,
-        error: "Not allowed to edit this list",
+        error: dictionary.not_allowed_to_edit_list,
       };
     }
     const categoryNameAlreadyExists = listWithCategories.categories.find(
@@ -46,7 +55,7 @@ export const createCategory = async (
     if (categoryNameAlreadyExists) {
       return {
         success: false,
-        error: "This category name already exists",
+        error: dictionary.category_already_exists,
       };
     }
 
@@ -56,7 +65,7 @@ export const createCategory = async (
     console.error(error);
     return {
       success: false,
-      error: "A db error occured",
+      error: dictionary.db_error,
     };
   }
 };

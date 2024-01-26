@@ -1,3 +1,9 @@
+DO $$ BEGIN
+ CREATE TYPE "language" AS ENUM('en', 'he', 'ru');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "categories" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -13,6 +19,7 @@ CREATE TABLE IF NOT EXISTS "items" (
 	"isInShoppingList" boolean DEFAULT false NOT NULL,
 	"isPickedUp" boolean DEFAULT false NOT NULL,
 	"pickedUpAt" timestamp,
+	"note" text DEFAULT '' NOT NULL,
 	CONSTRAINT "items_name_categoryId_unique" UNIQUE("name","categoryId")
 );
 --> statement-breakpoint
@@ -21,6 +28,7 @@ CREATE TABLE IF NOT EXISTS "lists" (
 	"name" text NOT NULL,
 	"invitationKey" uuid DEFAULT gen_random_uuid() NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"language" "language" DEFAULT 'en' NOT NULL,
 	CONSTRAINT "lists_invitationKey_unique" UNIQUE("invitationKey")
 );
 --> statement-breakpoint

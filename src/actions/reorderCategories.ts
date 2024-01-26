@@ -4,6 +4,7 @@ import {
   areAllCategoriesInUsersList,
   reorderCategoriesInList,
 } from "@/lib/db/utils";
+import { Language, getDictionary, isValidLanguage } from "@/lib/dictionaries";
 import { getUserIdFromSession } from "@/lib/supabase/serverActionClient";
 
 type ReturnType =
@@ -16,6 +17,7 @@ type ReturnType =
     };
 
 export const reorderCategories = async (
+  lang: Language,
   listId: number,
   categoriesIds: number[],
 ): Promise<ReturnType> => {
@@ -29,7 +31,13 @@ export const reorderCategories = async (
       success: false,
       error: "Invalid categories id's",
     };
+  } else if (!isValidLanguage(lang)) {
+    return {
+      success: false,
+      error: "Invalid lang",
+    };
   }
+  const { categories_page: dictionary } = await getDictionary(lang);
   try {
     const userId = await getUserIdFromSession();
     const areValidCategories = await areAllCategoriesInUsersList(
@@ -49,7 +57,7 @@ export const reorderCategories = async (
     console.error(error);
     return {
       success: false,
-      error: "A db error occured",
+      error: dictionary.db_error,
     };
   }
 };

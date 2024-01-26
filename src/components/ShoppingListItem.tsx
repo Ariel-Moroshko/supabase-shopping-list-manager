@@ -1,16 +1,17 @@
 "use client";
 
 import { usePickUpItem } from "@/hooks/usePickUpItem";
+import { Language } from "@/lib/dictionaries";
 import { Item, List } from "@/types/List";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-type Props = { listId: number; item: Item };
+type Props = { listId: number; item: Item; language: Language };
 
-export default function ShoppingListItem({ listId, item }: Props) {
+export default function ShoppingListItem({ listId, item, language }: Props) {
   const queryClient = useQueryClient();
-  const pickUpItemMutation = usePickUpItem();
+  const pickUpItemMutation = usePickUpItem(language);
   const [error, setError] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const pending = pickUpItemMutation.isPending;
@@ -42,7 +43,12 @@ export default function ShoppingListItem({ listId, item }: Props) {
   };
 
   return (
-    <li className="flex min-h-7 items-center">
+    <li
+      className={twMerge(
+        "group flex min-h-7 items-center",
+        isChecked && "checked",
+      )}
+    >
       <input
         type="checkbox"
         className="h-5 w-5"
@@ -54,15 +60,24 @@ export default function ShoppingListItem({ listId, item }: Props) {
         onChange={(e) => setIsChecked(e.currentTarget.checked)}
       />
       {error && <span className="font-bold text-red-600">Error: {error}</span>}
-      <label
-        htmlFor={`shoppingListItem-${item.id}`}
-        className={twMerge(
-          "pe-6 ps-4",
-          pending && "line-through decoration-red-600",
-        )}
-      >
-        {item.name}
-      </label>
+      <div className="flex-1 pe-6">
+        <label
+          htmlFor={`shoppingListItem-${item.id}`}
+          className="inline-block px-4"
+        >
+          <span
+            className={twMerge(
+              "bg-gradient-to-b from-red-600 to-red-600 bg-[length:0%_2px] bg-no-repeat transition-all duration-300 ease-out group-[.checked]:bg-[length:100%_2px]",
+              language === "he" ? "bg-[right_center]" : "bg-[left_center]",
+            )}
+          >
+            <span className="break-all">{item.name}</span>
+            {item.note && (
+              <span className="ms-4 break-all italic">{item.note}</span>
+            )}
+          </span>
+        </label>
+      </div>
     </li>
   );
 }

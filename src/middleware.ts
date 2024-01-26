@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseMiddlewareClient } from "./lib/supabase/middlewareClient";
 
 export async function middleware(request: NextRequest) {
+  request.headers.set("x-pathname", new URL(request.url).pathname);
   const { supabase, response } = getSupabaseMiddlewareClient(request);
 
   // Refresh session if expired - required for Server Components

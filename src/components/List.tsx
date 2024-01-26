@@ -6,37 +6,40 @@ import { useTabContext } from "@/hooks/useTabContext";
 import ShoppingList from "./ShoppingList";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useList } from "@/hooks/useList";
-import Link from "next/link";
-import { Button } from "./ui/button";
+import { Dictionary, Language } from "@/lib/dictionaries";
 
-type Props = { initialList: List; currentHost: string };
+type Props = {
+  initialList: List;
+  currentHost: string;
+  dictionary: Dictionary["list_page"];
+  language: Language;
+};
 
-export default function ListPage({ initialList, currentHost }: Props) {
+export default function ListPage({
+  initialList,
+  currentHost,
+  dictionary,
+  language,
+}: Props) {
   const { data: list } = useList(initialList);
   const { tab } = useTabContext();
   const networkStatus = useNetworkStatus();
-
-  if (list.categories.length === 0) {
-    return (
-      <div className="mt-4 flex flex-col items-center justify-center gap-4">
-        <div>List is empty.</div>
-        <Link href={`/lists/${list.id}/categories`}>
-          <Button className="min-w-64">Add categories</Button>
-        </Link>
-      </div>
-    );
-  }
   return (
     <>
       {networkStatus === "offline" && (
-        <div className="w-full rounded-md bg-red-500 py-3 text-center font-bold text-red-50 shadow-lg">
-          No network connection
+        <div className="mt-4 w-full rounded-md bg-red-500 py-3 text-center font-bold text-red-50 shadow-lg">
+          {dictionary.no_network_connection}
         </div>
       )}
       {tab === "allItems" ? (
-        <AllItemsList list={list} currentHost={currentHost} />
+        <AllItemsList
+          list={list}
+          currentHost={currentHost}
+          dictionary={dictionary}
+          language={language}
+        />
       ) : (
-        <ShoppingList list={list} />
+        <ShoppingList list={list} dictionary={dictionary} language={language} />
       )}
     </>
   );

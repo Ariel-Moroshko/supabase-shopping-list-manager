@@ -6,6 +6,7 @@ import {
   isCategoryNameExistsInList,
   isUserAllowedToEditCategory,
 } from "@/lib/db/utils";
+import { Language, getDictionary, isValidLanguage } from "@/lib/dictionaries";
 
 type ReturnType =
   | {
@@ -17,6 +18,7 @@ type ReturnType =
     };
 
 export const updateCategoryName = async (
+  lang: Language,
   categoryId: number,
   categoryName: string,
 ): Promise<ReturnType> => {
@@ -30,14 +32,21 @@ export const updateCategoryName = async (
       success: false,
       error: "Invalid category name",
     };
+  } else if (!isValidLanguage(lang)) {
+    return {
+      success: false,
+      error: "Invalid lang",
+    };
   }
+  const { categories_page: dictionary } = await getDictionary(lang);
+
   try {
     const userId = await getUserIdFromSession();
     const isAllowed = await isUserAllowedToEditCategory(userId, categoryId);
     if (!isAllowed) {
       return {
         success: false,
-        error: "Not allowed",
+        error: dictionary.not_allowed,
       };
     }
     const nameAlreadyExists = await isCategoryNameExistsInList(
@@ -47,7 +56,7 @@ export const updateCategoryName = async (
     if (nameAlreadyExists) {
       return {
         success: false,
-        error: "This category name already exists",
+        error: dictionary.category_already_exists,
       };
     }
     await dbUpdateCategoryName(userId, categoryId, categoryName);
@@ -56,7 +65,7 @@ export const updateCategoryName = async (
     console.error(error);
     return {
       success: false,
-      error: "A db error occured",
+      error: dictionary.db_error,
     };
   }
 };

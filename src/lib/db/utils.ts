@@ -2,6 +2,7 @@ import { and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
 import { db } from ".";
 import { sql } from "drizzle-orm";
 import { categories, items, lists, users, usersLists } from "./schema";
+import { Language } from "../dictionaries";
 
 export const isListNameExistsForUser = async (
   userId: string,
@@ -44,14 +45,14 @@ export const createListForUser = async (userId: string, listName: string) => {
   return newListIdResult;
 };
 
-export const getUserMainListId = async (userId: string) => {
-  const { mainListId } = (
-    await db
-      .select({ mainListId: users.mainListId })
-      .from(users)
-      .where(eq(users.id, userId))
-  )[0];
-  return mainListId;
+export const getUserMainList = async (userId: string) => {
+  return await db.query.users.findFirst({
+    where: eq(users.id, userId),
+    columns: {},
+    with: {
+      mainList: true,
+    },
+  });
 };
 
 export const getAllItemsInList = async (userId: string, listId: number) => {
@@ -362,12 +363,29 @@ export const updateCategoryName = async (
   categoryName: string,
 ) => {
   await db.execute(sql`
-  UPDATE categories
-  SET 
-    name = ${categoryName}
-  FROM "usersLists"
-  WHERE "usersLists"."userId" = ${userId}
-    AND categories."listId" = "usersLists"."listId"
-    AND categories.id = ${categoryId}
+    UPDATE categories
+    SET 
+      name = ${categoryName}
+    FROM "usersLists"
+    WHERE "usersLists"."userId" = ${userId}
+      AND categories."listId" = "usersLists"."listId"
+      AND categories.id = ${categoryId}
+  `);
+};
+
+export const changeListLanguage = async (
+  userId: string,
+  listId: number,
+  language: Language,
+) => {
+  await db.execute(sql`
+    UPDATE lists
+    SET 
+      language = ${language}
+    FROM 
+      "usersLists"
+    WHERE lists."id" = ${listId}
+      AND "usersLists"."userId" = ${userId}
+      AND "usersLists"."listId" = ${listId}
   `);
 };
