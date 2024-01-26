@@ -24,7 +24,7 @@ import {
 import { Button } from "./ui/button";
 import { Settings, X } from "lucide-react";
 import { Input } from "./ui/input";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Dictionary, Language } from "@/lib/dictionaries";
 import { changeLanguage } from "@/actions/changeLanguage";
 
@@ -43,6 +43,18 @@ export default function AllItemsList({
 }: Props) {
   const [searchText, setSearchText] = useState("");
   const [protocol, setProtocol] = useState("");
+
+  const filteredList: List = {
+    ...list,
+    categories: list.categories
+      .map((category) => ({
+        ...category,
+        items: category.items.filter((item) =>
+          item.name.toLowerCase().includes(searchText.toLowerCase()),
+        ),
+      }))
+      .filter((category) => category.items.length > 0),
+  };
 
   useEffect(() => {
     setProtocol(location.protocol);
@@ -184,13 +196,13 @@ export default function AllItemsList({
             <Button className="min-w-64">{dictionary.add_categories}</Button>
           </Link>
         </div>
-      ) : (
+      ) : filteredList.categories.length > 0 ? (
         <Accordion
           type="multiple"
           defaultValue={list.categories.map((c) => c.id.toString())}
           className="px-4"
         >
-          {list.categories.map((category) => (
+          {filteredList.categories.map((category) => (
             <AllItemsCategory
               key={category.id}
               listId={list.id}
@@ -200,6 +212,10 @@ export default function AllItemsList({
             />
           ))}
         </Accordion>
+      ) : (
+        <div className="mt-4 flex justify-center">
+          {dictionary.no_search_results}
+        </div>
       )}
     </div>
   );

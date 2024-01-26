@@ -74,7 +74,7 @@ export default function AllItemsItem({
       </div>
       <div className="flex items-center justify-center gap-3">
         {item.isInShoppingList ? (
-          <div className="flex h-8 items-center justify-center rounded-md  border border-slate-200 bg-emerald-100 px-2 py-0 hover:bg-emerald-100 ">
+          <div className="flex h-8 items-center justify-center rounded-md border border-slate-200 bg-emerald-100 px-2 py-0 hover:bg-emerald-100 ">
             <Check size={16} />
           </div>
         ) : (

@@ -11,6 +11,7 @@
     "add_categories": "Add categories",
     "no_network_connection": "No network connection",
     "search_item": "Search Item...",
+    "no_search_results": "No items found matching the search",
     "more": "More",
     "edit_categories": "Edit categories",
     "edit_items": "Edit items",
