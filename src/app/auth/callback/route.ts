@@ -10,8 +10,8 @@ export async function GET(request: Request) {
     const supabase = getSupabaseRouteHandlerClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
-      // return NextResponse.redirect(`http://192.168.1.118:3000${next}`);
+      // return NextResponse.redirect(`${origin}${next}`);
+      return NextResponse.redirect(`http://192.168.1.118:3000${next}`);
     }
   }
 

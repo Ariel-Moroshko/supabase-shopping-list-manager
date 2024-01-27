@@ -4,7 +4,8 @@
     "categories": "Edit Categories",
     "items": "Edit Items",
     "signout": "Sign out",
-    "signing_out": "Signing out"
+    "signing_out": "Signing out",
+    "join_list": "Join List"
   },
   "list_page": {
     "list_is_empty": "List is empty",
@@ -84,5 +85,8 @@
     "edit_item": "Edit Item",
     "save": "save",
     "saving": "saving"
+  },
+  "join_list_page": {
+    "invalid_key": "Invalid invitation key"
   }
 }

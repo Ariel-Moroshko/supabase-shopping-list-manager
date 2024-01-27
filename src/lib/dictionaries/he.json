@@ -4,7 +4,8 @@
     "categories": "עריכת קטגוריות",
     "items": "עריכת פריטים",
     "signout": "התנתק",
-    "signing_out": "מתנתק"
+    "signing_out": "מתנתק",
+    "join_list": "הצטרפות לרשימה"
   },
   "list_page": {
     "list_is_empty": "הרשימה ריקה",
@@ -84,5 +85,8 @@
     "edit_item": "עריכת פריט",
     "save": "שמור",
     "saving": "שומר"
+  },
+  "join_list_page": {
+    "invalid_key": "קישור הצטרפות לרשימה לא תקין"
   }
 }

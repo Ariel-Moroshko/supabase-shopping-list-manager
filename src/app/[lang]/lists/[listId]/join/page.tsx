@@ -3,11 +3,14 @@ import {
   hasUserListId,
   joinUserToList,
 } from "@/lib/db/utils";
+import { getDictionary, isValidLanguage } from "@/lib/dictionaries";
 import { getUserIdFromSession } from "@/lib/supabase/serverClient";
+import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
 type Props = {
   params: {
+    lang: string;
     listId: string;
   };
   searchParams: {
@@ -16,29 +19,29 @@ type Props = {
 };
 
 export default async function JoinList({
-  params: { listId },
+  params: { lang, listId },
   searchParams: { invitationKey },
 }: Props) {
-  if (!Number(listId)) {
+  if (!Number(listId) || !isValidLanguage(lang)) {
     notFound();
   }
-  let content = "";
+  const { join_list_page: dictionary } = await getDictionary(lang);
   if (!invitationKey) {
     return (
-      <div className="mt-6 flex justify-center">Invalid invitation key</div>
+      <div className="mt-6 flex justify-center">{dictionary.invalid_key}</div>
     );
   }
   const list = await getListByIdAndInvitationKey(Number(listId), invitationKey);
   if (!list) {
     return (
-      <div className="mt-6 flex justify-center">Invalid invitation key</div>
+      <div className="mt-6 flex justify-center">{dictionary.invalid_key}</div>
     );
   }
   const userId = await getUserIdFromSession();
   const userHasThisList = await hasUserListId(userId, Number(listId));
   if (userHasThisList) {
-    redirect(`/lists/${listId}`);
+    redirect(`/${lang}/lists/${listId}`);
   }
   await joinUserToList(userId, Number(listId));
-  redirect(`/lists/${listId}`);
+  redirect(`/${lang}/lists/${listId}`);
 }

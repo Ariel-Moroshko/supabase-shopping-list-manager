@@ -14,6 +14,7 @@ export default function TopNavTitle({ language, dictionary }: Props) {
     const listPageRegex = /^\/(en|he|ru)\/lists\/\d+$/;
     const itemsPageRegex = /^\/(en|he|ru)\/lists\/\d+\/items$/;
     const categoriesPageRegex = /^\/(en|he|ru)\/lists\/\d+\/categories$/;
+    const joinListPageRegex = /^\/(en|he|ru)\/lists\/\d+\/join$/;
     const loginPageRegex = /^\/login$/;
     if (listPageRegex.test(pathname)) {
       setTitle(dictionary.all_items);
@@ -21,6 +22,8 @@ export default function TopNavTitle({ language, dictionary }: Props) {
       setTitle(dictionary.items);
     } else if (categoriesPageRegex.test(pathname)) {
       setTitle(dictionary.categories);
+    } else if (joinListPageRegex.test(pathname)) {
+      setTitle(dictionary.join_list);
     } else if (loginPageRegex.test(pathname)) {
       setTitle("Login");
     } else {
