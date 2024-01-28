@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/cron-wake-up-supabase",
+      "schedule": "0 0 */3 * *"
+    }
+  ]
+}
