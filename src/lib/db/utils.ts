@@ -449,3 +449,7 @@ export const updateItemName = async (
     .set({ name: updatedItemName })
     .where(eq(items.id, itemId));
 };
+
+export const selectOneListForCronJob = async () => {
+  await db.select().from(lists).limit(1);
+};
