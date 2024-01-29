@@ -30,45 +30,43 @@ export default function ItemsPage({ initialList, lang, dictionary }: Props) {
           type="multiple"
           defaultValue={list.categories.map((c) => c.id.toString())}
         >
-          {list.categories
-            .filter((c) => c.items.length > 0)
-            .map((category) => (
-              <AccordionItem value={category.id.toString()} key={category.id}>
-                <AccordionTrigger
-                  className={twMerge(
-                    "break-all text-left",
-                    lang === "he" && "text-right",
-                  )}
-                >
-                  <span className="pe-4">{category.name}</span>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <ol className="ms-6 flex flex-col gap-2">
-                    {category.items.map((item) => (
-                      <li key={item.id} className="flex items-center py-1">
-                        <div className="flex flex-1 pe-4">
-                          <span className="break-all">{item.name}</span>
-                        </div>
-                        <div className="flex items-center justify-center gap-2">
-                          <EditItemName
-                            listId={list.id}
-                            item={item}
-                            lang={lang}
-                            dictionary={dictionary}
-                          />
-                          <DeleteItem
-                            listId={list.id}
-                            item={item}
-                            lang={lang}
-                            dictionary={dictionary}
-                          />
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+          {list.categories.map((category) => (
+            <AccordionItem value={category.id.toString()} key={category.id}>
+              <AccordionTrigger
+                className={twMerge(
+                  "break-all text-left",
+                  lang === "he" && "text-right",
+                )}
+              >
+                <span className="pe-4">{category.name}</span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <ol className="ms-6 flex flex-col gap-2">
+                  {category.items.map((item) => (
+                    <li key={item.id} className="flex items-center py-1">
+                      <div className="flex flex-1 pe-4">
+                        <span className="break-all">{item.name}</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <EditItemName
+                          listId={list.id}
+                          item={item}
+                          lang={lang}
+                          dictionary={dictionary}
+                        />
+                        <DeleteItem
+                          listId={list.id}
+                          item={item}
+                          lang={lang}
+                          dictionary={dictionary}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
         </Accordion>
       </div>
     </div>

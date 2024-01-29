@@ -39,7 +39,8 @@
     "change_language": "שנה שפה",
     "english": "אנגלית",
     "hebrew": "עברית",
-    "db_error": "קרתה תקלה במערכת"
+    "db_error": "קרתה תקלה במערכת",
+    "clear_search": "נקה חיפוש"
   },
   "categories_page": {
     "go_back_to_list": "חזור לרשימה",

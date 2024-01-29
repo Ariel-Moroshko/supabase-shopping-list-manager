@@ -39,7 +39,8 @@
     "change_language": "Change language",
     "english": "English",
     "hebrew": "Hebrew",
-    "db_error": "A db error occured"
+    "db_error": "A db error occured",
+    "clear_search": "Clear search"
   },
   "categories_page": {
     "go_back_to_list": "Go back to list",
