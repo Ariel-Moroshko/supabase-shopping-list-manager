@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import ClearPickedUpItems from "./ClearPickedUpItems";
 import UndoPickedUpItem from "./UndoPickedUpItem";
 import { Item } from "@/types/List";
@@ -10,18 +10,17 @@ type Props = {
   language: Language;
   dictionary: Dictionary["list_page"];
 };
+type Ref = HTMLDivElement;
 
-export default function PickedUpItemsActions({
-  listId,
-  lastPickedUpItemId,
-  language,
-  dictionary,
-}: Props) {
+export default forwardRef<Ref, Props>(function PickedUpItemsActions(
+  { listId, lastPickedUpItemId, language, dictionary },
+  ref,
+) {
   const [isUndoing, setIsUndoing] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
 
   return (
-    <div className="flex gap-4 px-2">
+    <div className="flex gap-4 px-2" ref={ref}>
       <UndoPickedUpItem
         listId={listId}
         lastPickedUpItemId={lastPickedUpItemId}
@@ -39,4 +38,4 @@ export default function PickedUpItemsActions({
       />
     </div>
   );
-}
+});
