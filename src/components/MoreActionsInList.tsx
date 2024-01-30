@@ -113,7 +113,7 @@ export default function MoreActionsInList({
               <Button
                 onClick={() => {
                   window.open(
-                    `whatsapp://send?text=To join my shopping list click the following link:%0Ahttps://${currentHost}/lists/${list.id}/join?invitationKey=${list.invitationKey}`,
+                    `whatsapp://send?text=To join my shopping list click the following link:%0Ahttps://${currentHost}/${language}/lists/${list.id}/join?invitationKey=${list.invitationKey}`,
                   );
                 }}
                 variant="secondary"
