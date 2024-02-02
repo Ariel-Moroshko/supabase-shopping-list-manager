@@ -21,14 +21,15 @@ export default function SearchItem({
         id="searchText"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        className="bg-slate-100 pe-8"
+        className="bg-slate-100 pe-12"
         placeholder={dictionary.search_item}
       />
       <Button
+        onClick={() => setSearchText("")}
         variant="ghost"
-        className="absolute top-1/2 -translate-y-1/2 px-2 py-2 hover:bg-inherit ltr:right-0 rtl:left-0"
+        className="absolute top-1/2 -translate-y-1/2 px-4 py-2 hover:bg-inherit ltr:right-0 rtl:left-0"
       >
-        <X onClick={() => setSearchText("")} strokeWidth={1} size={16} />
+        <X strokeWidth={1} size={16} />
       </Button>
     </div>
   );
