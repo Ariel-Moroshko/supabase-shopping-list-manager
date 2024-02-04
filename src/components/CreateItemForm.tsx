@@ -113,12 +113,17 @@ export default function CreateItemForm({ list, lang, dictionary }: Props) {
                   // https://github.com/radix-ui/primitives/issues/1658#issuecomment-1714105445
                   ref={(ref) => {
                     if (!ref) return;
-                    ref.ontouchstart = (e) => {
+                    // should be ontouchend, because ontouchstart messes up the scroll on mobile
+                    ref.ontouchend = (e) => {
                       e.preventDefault();
                     };
                   }}
                 >
-                  <SelectGroup className="max-h-[200px] overflow-y-auto">
+                  <ScrollArea
+                    className="h-72 pe-4"
+                    type="always"
+                    dir={lang === "he" ? "rtl" : "ltr"}
+                  >
                     {list.categories.map((category) => (
                       <SelectItem
                         key={category.id}
@@ -127,7 +132,7 @@ export default function CreateItemForm({ list, lang, dictionary }: Props) {
                         {category.name}
                       </SelectItem>
                     ))}
-                  </SelectGroup>
+                  </ScrollArea>
                 </SelectContent>
               </Select>
             </label>
