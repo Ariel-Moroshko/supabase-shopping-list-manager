@@ -10,10 +10,12 @@ import { useCreateItem } from "@/hooks/useCreateItem";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dictionary, Language } from "@/lib/dictionaries";
 
 type Props = {
@@ -116,14 +118,16 @@ export default function CreateItemForm({ list, lang, dictionary }: Props) {
                     };
                   }}
                 >
-                  {list.categories.map((category) => (
-                    <SelectItem
-                      key={category.id}
-                      value={category.id.toString()}
-                    >
-                      {category.name}
-                    </SelectItem>
-                  ))}
+                  <SelectGroup className="max-h-[200px] overflow-y-auto">
+                    {list.categories.map((category) => (
+                      <SelectItem
+                        key={category.id}
+                        value={category.id.toString()}
+                      >
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </label>
