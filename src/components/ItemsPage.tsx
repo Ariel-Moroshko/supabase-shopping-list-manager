@@ -23,7 +23,7 @@ export default function ItemsPage({ initialList, lang, dictionary }: Props) {
   const { data: list } = useItems(initialList);
 
   return (
-    <div className="px-4 py-8">
+    <div className="px-4 pt-8">
       <div className="flex flex-col">
         <CreateItemForm list={list} lang={lang} dictionary={dictionary} />
         <Accordion
