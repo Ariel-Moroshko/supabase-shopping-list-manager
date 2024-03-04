@@ -39,6 +39,7 @@
     "change_language": "Change language",
     "english": "English",
     "hebrew": "Hebrew",
+    "russian": "Russian",
     "db_error": "A db error occured",
     "clear_search": "Clear search"
   },

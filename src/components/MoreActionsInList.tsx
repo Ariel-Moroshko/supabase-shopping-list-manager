@@ -84,6 +84,9 @@ export default function MoreActionsInList({
                 <DropdownMenuItem onClick={() => onLanguageChange("he")}>
                   <span>{dictionary.hebrew}</span>
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onLanguageChange("ru")}>
+                  <span>{dictionary.russian}</span>
+                </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>

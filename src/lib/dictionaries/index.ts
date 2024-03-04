@@ -3,7 +3,7 @@ export type Language = "en" | "he" | "ru";
 const dictionaries = {
   en: () => import("./en.json").then((module) => module.default),
   he: () => import("./he.json").then((module) => module.default),
-  ru: () => import("./en.json").then((module) => module.default),
+  ru: () => import("./ru.json").then((module) => module.default),
 };
 
 export const isValidLanguage = (language: string): language is Language =>
