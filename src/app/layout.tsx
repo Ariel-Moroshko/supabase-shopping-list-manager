@@ -36,7 +36,7 @@ export default function RootLayout({
         <div className="mx-auto flex min-h-dvh max-w-lg flex-col bg-white shadow-lg">
           <TextSizeLoader>
             <TopNavTitleContextProvider>
-              <TopNav language={language} />
+              {langFromHeader && <TopNav language={language} />}
               <ReactQueryProvider>{children}</ReactQueryProvider>
             </TopNavTitleContextProvider>
           </TextSizeLoader>

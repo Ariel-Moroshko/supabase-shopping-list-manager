@@ -1,6 +1,8 @@
+import RedirectTo from "@/components/RedirectTo";
 import { getUserMainList } from "@/lib/db/utils";
 import { getUserIdFromSession } from "@/lib/supabase/serverClient";
 import { redirect } from "next/navigation";
+import { useEffect } from "react";
 
 export default async function Home() {
   const userId = await getUserIdFromSession();
@@ -12,5 +14,5 @@ export default async function Home() {
     redirect(`/en/lists/create`);
   }
   const { id: mainListId, language } = userWithMainList.mainList;
-  redirect(`/${language}/lists/${mainListId}`);
+  return <RedirectTo path={`/${language}/lists/${mainListId}`} />;
 }

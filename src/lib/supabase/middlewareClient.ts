@@ -54,7 +54,7 @@ export const getSupabaseMiddlewareClient = (request: NextRequest) => {
           });
         },
       },
-    }
+    },
   );
 
   return { supabase, response };
