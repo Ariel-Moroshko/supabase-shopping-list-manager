@@ -32,7 +32,7 @@ export default function AllItemsCategory({
         <span className="pe-4">{category.name}</span>
       </AccordionTrigger>
       <AccordionContent>
-        <ol className="ms-6 flex flex-col gap-2 pe-1 pt-1">
+        <ol className="ms-2 flex flex-col gap-2 pe-1 pt-1">
           {category.items.map((item) => (
             <AllItemsItem
               key={item.id}

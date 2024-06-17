@@ -5,7 +5,11 @@
     "items": "עריכת פריטים",
     "signout": "התנתק",
     "signing_out": "מתנתק",
-    "join_list": "הצטרפות לרשימה"
+    "join_list": "הצטרפות לרשימה",
+    "text_size": "גודל טקסט",
+    "text_size_medium": "רגיל",
+    "text_size_large": "גדול",
+    "text_size_x_large": "מאוד גדול"
   },
   "list_page": {
     "list_is_empty": "הרשימה ריקה",

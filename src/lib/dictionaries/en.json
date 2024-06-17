@@ -5,7 +5,11 @@
     "items": "Edit Items",
     "signout": "Sign out",
     "signing_out": "Signing out",
-    "join_list": "Join List"
+    "join_list": "Join List",
+    "text_size": "Text size",
+    "text_size_medium": "Regular",
+    "text_size_large": "Large",
+    "text_size_x_large": "Very large"
   },
   "list_page": {
     "list_is_empty": "List is empty",

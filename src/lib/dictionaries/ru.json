@@ -5,7 +5,11 @@
     "items": "редактировать продукты",
     "signout": "Выйти",
     "signing_out": "Выход",
-    "join_list": "присоединиться к списку"
+    "join_list": "присоединиться к списку",
+    "text_size": "Размер текста",
+    "text_size_medium": "Средний",
+    "text_size_large": "Большой",
+    "text_size_x_large": "Очень большой"
   },
   "list_page": {
     "list_is_empty": "Список пуст",

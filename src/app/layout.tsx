@@ -6,6 +6,7 @@ import TopNavTitleContextProvider from "@/components/providers/TopNavTitleContex
 import { ReactQueryProvider } from "@/components/providers/ReactQueryProvider";
 import { headers } from "next/headers";
 import { isValidLanguage } from "@/lib/dictionaries";
+import { TextSizeLoader } from "@/components/TextSizeLoader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,10 +34,12 @@ export default function RootLayout({
     <html lang={language} dir={language === "he" ? "rtl" : "ltr"}>
       <body className={`${inter.className} bg-slate-50`}>
         <div className="mx-auto flex min-h-dvh max-w-lg flex-col bg-white shadow-lg">
-          <TopNavTitleContextProvider>
-            <TopNav language={language} />
-            <ReactQueryProvider>{children}</ReactQueryProvider>
-          </TopNavTitleContextProvider>
+          <TextSizeLoader>
+            <TopNavTitleContextProvider>
+              <TopNav language={language} />
+              <ReactQueryProvider>{children}</ReactQueryProvider>
+            </TopNavTitleContextProvider>
+          </TextSizeLoader>
         </div>
       </body>
     </html>

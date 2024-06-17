@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import SignOut from "./SignOut";
 import { getUserEmailFromSession } from "@/lib/supabase/serverClient";
 import { Language, getDictionary } from "@/lib/dictionaries";
+import TextSizeChanger from "./TextSizeChanger";
 
 type Props = { language: Language };
 
@@ -22,8 +23,9 @@ export default async function TopNav({ language }: Props) {
               side={language === "he" ? "right" : "left"}
               className="flex flex-col"
             >
-              <div>
+              <div className="flex flex-col gap-8">
                 <SignOut userEmail={userEmail} dictionary={top_nav} />
+                <TextSizeChanger />
               </div>
             </SheetContent>
           </Sheet>
